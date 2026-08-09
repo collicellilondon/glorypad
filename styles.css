@@ -13,9 +13,9 @@
   --green: #f2f2f2;
   --line: rgba(210, 210, 210, 0.12);
   --glow: rgba(230, 230, 230, 0.34);
-  --active-fluor: #b9ffd8;
-  --active-fluor-soft: rgba(185, 255, 216, 0.24);
-  --active-fluor-faint: rgba(185, 255, 216, 0.1);
+  --active-fluor: #e1e4e8;
+  --active-fluor-soft: rgba(225, 228, 232, 0.16);
+  --active-fluor-faint: rgba(225, 228, 232, 0.07);
   --shadow: 0 28px 90px rgba(0, 0, 0, 0.45);
 }
 
@@ -61,21 +61,6 @@ button {
   min-height: 100vh;
   display: grid;
   padding: 24px;
-}
-
-.home-watermark {
-  position: fixed;
-  left: calc(50% + clamp(18px, 3.6vw, 34px));
-  bottom: max(34px, calc(env(safe-area-inset-bottom) + 24px));
-  z-index: 4;
-  transform: translateX(-50%);
-  color: rgba(222, 222, 222, 0.58);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  line-height: 1;
-  text-transform: uppercase;
-  pointer-events: none;
 }
 
 .ambient-field {
@@ -269,49 +254,6 @@ button {
   font-size: clamp(1rem, 2vw, 1.18rem);
   font-weight: 600;
   line-height: 1.7;
-}
-
-.cover-actions {
-  position: fixed;
-  left: calc(50% + clamp(18px, 3.6vw, 34px));
-  top: calc(50svh + 155px);
-  z-index: 3;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  gap: 12px;
-  pointer-events: none;
-}
-
-.primary-action {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: auto;
-  min-width: 0;
-  padding: 8px 0;
-  border: 0;
-  background: transparent;
-  color: rgba(220, 220, 220, 0.68);
-  box-shadow: none;
-  font-size: 0.88rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-  text-align: center;
-  transition: color 160ms ease, opacity 160ms ease, transform 160ms ease;
-  transform-origin: center;
-  pointer-events: auto;
-}
-
-.primary-action:hover {
-  color: rgba(240, 240, 240, 0.92);
-}
-
-.primary-action:active {
-  transform: scale(0.98);
 }
 
 .app-shell {
@@ -542,8 +484,8 @@ button {
 }
 
 .pulse-ring.is-on {
-  background: var(--active-fluor);
-  box-shadow: 0 0 26px var(--active-fluor-soft), 0 0 76px var(--active-fluor-faint);
+  background: rgba(225, 228, 232, 0.82);
+  box-shadow: 0 0 18px rgba(225, 228, 232, 0.2), 0 0 52px rgba(225, 228, 232, 0.08);
 }
 
 .pads-grid {
@@ -571,14 +513,13 @@ button {
 
 .pad.is-active {
   background:
-    radial-gradient(circle at 50% 38%, var(--active-fluor-soft), transparent 56%),
-    radial-gradient(circle at 50% 95%, var(--active-fluor-faint), transparent 44%),
-    color-mix(in srgb, var(--active-fluor) 10%, var(--panel));
-  color: #f4fff8;
+    radial-gradient(circle at 50% 42%, rgba(255, 255, 255, 0.09), transparent 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+    color-mix(in srgb, var(--active-fluor) 6%, var(--panel));
+  color: #f4f5f7;
   box-shadow:
-    inset 0 0 0 1px rgba(185, 255, 216, 0.42),
-    inset 0 0 78px rgba(185, 255, 216, 0.14),
-    0 0 34px rgba(185, 255, 216, 0.12);
+    inset 0 0 0 1px rgba(225, 228, 232, 0.18),
+    inset 0 0 52px rgba(225, 228, 232, 0.08);
 }
 
 .pad-light {
@@ -592,8 +533,8 @@ button {
 }
 
 .pad.is-active .pad-light {
-  background: var(--active-fluor);
-  box-shadow: 0 0 16px rgba(185, 255, 216, 0.92), 0 0 42px rgba(185, 255, 216, 0.38);
+  background: rgba(242, 244, 246, 0.88);
+  box-shadow: 0 0 14px rgba(225, 228, 232, 0.32), 0 0 34px rgba(225, 228, 232, 0.12);
 }
 
 .pad-note {
@@ -736,49 +677,94 @@ input[type="range"] {
     var(--bg-deep);
 }
 
-.footer-watermark {
-  position: absolute;
-  left: 50%;
-  bottom: max(10px, env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  color: rgba(220, 220, 220, 0.32);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  line-height: 1;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
 .bottom-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   place-items: center;
-  min-width: 82px;
-  min-height: 36px;
-  padding: 0 14px;
-  border: 1px solid rgba(210, 210, 210, 0.1);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.035);
-  color: rgba(205, 205, 205, 0.88);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  width: 48px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(205, 205, 205, 0.82);
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
 .stop-bottom {
-  min-width: 92px;
-  background: rgba(215, 215, 215, 0.075);
+  background: rgba(255, 255, 255, 0.035);
 }
 
-.stop-bottom i {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  background: var(--blue);
+.bottom-button:active {
+  transform: scale(0.96);
+}
+
+.bottom-icon {
+  position: relative;
+  display: block;
+  width: 26px;
+  height: 26px;
+}
+
+.icon-stop {
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-radius: 5px;
+}
+
+.icon-sliders,
+.icon-music {
+  color: inherit;
+}
+
+.icon-sliders::before,
+.icon-sliders::after,
+.icon-music::before,
+.icon-music::after {
+  content: "";
+  position: absolute;
+  display: block;
+}
+
+.icon-sliders {
+  background:
+    linear-gradient(currentColor, currentColor) 0 5px / 26px 2px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 13px / 26px 2px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 21px / 26px 2px no-repeat;
+}
+
+.icon-sliders::before {
+  left: 5px;
+  top: 1px;
+  width: 6px;
+  height: 6px;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  background: var(--bg-deep);
+  box-sizing: border-box;
+  box-shadow: 10px 8px 0 -2px var(--bg-deep), 10px 8px 0 0 currentColor, 4px 16px 0 -2px var(--bg-deep), 4px 16px 0 0 currentColor;
+}
+
+.icon-music::before {
+  left: 15px;
+  top: 2px;
+  width: 8px;
+  height: 17px;
+  border-left: 2px solid currentColor;
+  border-top: 2px solid currentColor;
+  transform: skewY(12deg);
+}
+
+.icon-music::after {
+  left: 3px;
+  bottom: 2px;
+  width: 12px;
+  height: 9px;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  transform: rotate(-18deg);
 }
 
 @media (min-width: 780px) {
@@ -807,23 +793,6 @@ input[type="range"] {
   .cover-copy {
     max-width: 100%;
     font-size: 0.98rem;
-  }
-
-  .cover-actions {
-    left: calc(50% + 28px);
-    top: calc(50svh + 118px);
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  .home-watermark {
-    left: calc(50% + 28px);
-  }
-
-  .primary-action {
-    width: auto;
-    margin-inline: auto;
   }
 
   .glory-logo {
@@ -868,10 +837,9 @@ input[type="range"] {
   }
 
   .bottom-button {
-    min-width: 0;
-    flex: 1;
+    width: 42px;
+    height: 40px;
     padding: 0 10px;
-    font-size: 0.72rem;
   }
 
   .mode-tab {

@@ -30,7 +30,7 @@ const topHomeButton = document.querySelector("#topHomeButton");
 const homeConfigButton = document.querySelector("#homeConfigButton");
 const homeScreen = document.querySelector("#homeScreen");
 const padsScreen = document.querySelector("#padsScreen");
-const startButton = document.querySelector("#startButton");
+const SPLASH_DURATION_MS = 3000;
 const settingsButton = document.querySelector("#settingsButton");
 const bottomSettingsButton = document.querySelector("#bottomSettingsButton");
 const musicButton = document.querySelector("#musicButton");
@@ -47,6 +47,7 @@ let activeAudio = null;
 let audioContext = null;
 let synthNodes = null;
 let currentLibrary = padLibraries[0];
+let splashTimer = null;
 
 const AUDIO_FADE_IN_MS = 2400;
 const AUDIO_FADE_OUT_MS = 4200;
@@ -98,9 +99,12 @@ function showHome() {
   stopCurrentPad();
   homeScreen.classList.remove("is-hidden");
   padsScreen.classList.add("is-hidden");
+  window.clearTimeout(splashTimer);
+  splashTimer = window.setTimeout(() => showPads("live"), SPLASH_DURATION_MS);
 }
 
 function showPads(view = "live") {
+  window.clearTimeout(splashTimer);
   homeScreen.classList.add("is-hidden");
   padsScreen.classList.remove("is-hidden");
   setView(view);
@@ -301,6 +305,7 @@ renderPads();
 renderToneOptions();
 renderLibraries();
 lockDarkTheme();
+splashTimer = window.setTimeout(() => showPads("live"), SPLASH_DURATION_MS);
 
 padsGrid.addEventListener("click", (event) => {
   const button = event.target.closest(".pad");
@@ -318,7 +323,6 @@ modeTabs.forEach((button) => {
   button.addEventListener("click", () => setView(button.dataset.view));
 });
 
-startButton.addEventListener("click", () => showPads("live"));
 homeConfigButton?.addEventListener("click", () => showPads("sounds"));
 homeButton?.addEventListener("click", showHome);
 topHomeButton.addEventListener("click", showHome);
