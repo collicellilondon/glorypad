@@ -275,8 +275,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 18px 20px 14px;
+  gap: 18px;
+  padding: 22px 24px 18px;
   border-bottom: 1px solid var(--panel-line);
   background:
     linear-gradient(90deg, color-mix(in srgb, var(--panel) 82%, transparent), transparent),
@@ -309,7 +309,7 @@ button {
   display: flex;
   align-items: center;
   min-width: 0;
-  gap: 14px;
+  gap: 16px;
   background: transparent;
   color: var(--text);
   text-align: left;
@@ -317,7 +317,7 @@ button {
 
 .app-brand > span:last-child {
   display: grid;
-  gap: 3px;
+  gap: 5px;
 }
 
 .app-brand strong,
@@ -329,15 +329,16 @@ button {
 }
 
 .app-brand strong {
-  font-size: 1rem;
-  font-weight: 800;
+  color: rgba(246, 247, 249, 0.96);
+  font-size: 1.16rem;
+  font-weight: 850;
 }
 
 .app-brand small {
-  color: var(--blue);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  color: rgba(210, 213, 218, 0.78);
+  font-size: 0.78rem;
+  font-weight: 760;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -345,9 +346,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 46px;
-  width: 46px;
-  height: 46px;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
   gap: 4px;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -385,8 +386,8 @@ button {
 .top-action {
   display: grid;
   flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -668,9 +669,9 @@ input[type="range"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 78px;
-  padding: 12px 20px 22px;
+  gap: clamp(22px, 8vw, 58px);
+  min-height: 92px;
+  padding: 16px 28px 28px;
   border-top: 1px solid rgba(210, 210, 210, 0.08);
   background:
     linear-gradient(180deg, rgba(9, 10, 12, 0.4), rgba(3, 4, 5, 0.94)),
@@ -682,13 +683,13 @@ input[type="range"] {
   align-items: center;
   justify-content: center;
   place-items: center;
-  width: 48px;
-  height: 42px;
+  width: 62px;
+  height: 54px;
   padding: 0;
   border: 0;
   border-radius: 12px;
   background: transparent;
-  color: rgba(205, 205, 205, 0.82);
+  color: rgba(218, 220, 224, 0.88);
   transition: background 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
@@ -703,13 +704,13 @@ input[type="range"] {
 .bottom-icon {
   position: relative;
   display: block;
-  width: 26px;
-  height: 26px;
+  width: 31px;
+  height: 31px;
 }
 
 .icon-stop {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border: 2px solid currentColor;
   border-radius: 5px;
 }
@@ -730,28 +731,28 @@ input[type="range"] {
 
 .icon-sliders {
   background:
-    linear-gradient(currentColor, currentColor) 0 5px / 26px 2px no-repeat,
-    linear-gradient(currentColor, currentColor) 0 13px / 26px 2px no-repeat,
-    linear-gradient(currentColor, currentColor) 0 21px / 26px 2px no-repeat;
+    linear-gradient(currentColor, currentColor) 0 6px / 31px 2px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 15px / 31px 2px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 24px / 31px 2px no-repeat;
 }
 
 .icon-sliders::before {
-  left: 5px;
-  top: 1px;
-  width: 6px;
-  height: 6px;
+  left: 6px;
+  top: 2px;
+  width: 7px;
+  height: 7px;
   border: 2px solid currentColor;
   border-radius: 999px;
   background: var(--bg-deep);
   box-sizing: border-box;
-  box-shadow: 10px 8px 0 -2px var(--bg-deep), 10px 8px 0 0 currentColor, 4px 16px 0 -2px var(--bg-deep), 4px 16px 0 0 currentColor;
+  box-shadow: 12px 9px 0 -2px var(--bg-deep), 12px 9px 0 0 currentColor, 5px 18px 0 -2px var(--bg-deep), 5px 18px 0 0 currentColor;
 }
 
 .icon-music::before {
-  left: 15px;
+  left: 18px;
   top: 2px;
-  width: 8px;
-  height: 17px;
+  width: 9px;
+  height: 21px;
   border-left: 2px solid currentColor;
   border-top: 2px solid currentColor;
   transform: skewY(12deg);
@@ -760,8 +761,8 @@ input[type="range"] {
 .icon-music::after {
   left: 3px;
   bottom: 2px;
-  width: 12px;
-  height: 9px;
+  width: 14px;
+  height: 11px;
   border: 2px solid currentColor;
   border-radius: 999px;
   transform: rotate(-18deg);
@@ -811,7 +812,7 @@ input[type="range"] {
   }
 
   .app-topbar {
-    padding: 16px 14px 14px;
+    padding: 20px 18px 16px;
   }
 
   .icon-text {
@@ -819,27 +820,27 @@ input[type="range"] {
   }
 
   .mini-wave {
-    flex-basis: 42px;
-    width: 42px;
-    height: 42px;
+    flex-basis: 48px;
+    width: 48px;
+    height: 48px;
     border-radius: 14px;
   }
 
   .top-action {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
   }
 
   .bottom-bar {
-    min-height: 74px;
-    padding: 12px 14px 22px;
-    gap: 8px;
+    min-height: 88px;
+    padding: 14px 22px 26px;
+    gap: clamp(22px, 9vw, 42px);
   }
 
   .bottom-button {
-    width: 42px;
-    height: 40px;
-    padding: 0 10px;
+    width: 56px;
+    height: 50px;
+    padding: 0;
   }
 
   .mode-tab {
