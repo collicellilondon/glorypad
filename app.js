@@ -48,7 +48,8 @@ let audioContext = null;
 let synthNodes = null;
 let currentLibrary = padLibraries[0];
 
-const AUDIO_FADE_MS = 900;
+const AUDIO_FADE_MS = 2200;
+const STOP_FADE_MS = 900;
 const AUDIO_FADE_FRAME_MS = 30;
 const masterGainValue = () => Number(volumeSlider.value) / 100;
 
@@ -184,7 +185,11 @@ function stopSynth() {
 
 function stopCurrentPad() {
   if (activeAudio) {
-    fadeOutAudio(activeAudio);
+    const audioToStop = activeAudio;
+    fadeAudioTo(audioToStop, 0, STOP_FADE_MS, () => {
+      audioToStop.pause();
+      audioToStop.currentTime = 0;
+    });
     activeAudio = null;
   }
 
@@ -249,14 +254,20 @@ function playPad(pad) {
     return;
   }
 
-  stopCurrentPad();
+  const outgoingAudio = activeAudio;
+  const hadSynthPad = Boolean(synthNodes);
+
   setActivePad(pad);
 
   const file = pad.files[currentLibrary.id];
   if (!file) {
+    if (outgoingAudio) fadeOutAudio(outgoingAudio);
+    if (hadSynthPad) stopSynth();
+    activeAudio = null;
     playSynthPad(pad);
     return;
   }
+
   const audio = new Audio(`${currentLibrary.folder}/${encodeURIComponent(file)}`);
   audio.loop = true;
   audio.volume = 0;
@@ -264,9 +275,15 @@ function playPad(pad) {
 
   audio
     .play()
-    .then(() => fadeAudioTo(audio, masterGainValue()))
+    .then(() => {
+      if (hadSynthPad) stopSynth();
+      fadeAudioTo(audio, masterGainValue());
+      if (outgoingAudio) fadeOutAudio(outgoingAudio);
+    })
     .catch(() => {
       activeAudio = null;
+      if (outgoingAudio) fadeOutAudio(outgoingAudio);
+      if (hadSynthPad) stopSynth();
       playSynthPad(pad);
     });
 }
