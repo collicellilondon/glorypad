@@ -48,10 +48,12 @@ let audioContext = null;
 let synthNodes = null;
 let currentLibrary = padLibraries[0];
 
-const AUDIO_FADE_MS = 2200;
+const AUDIO_FADE_IN_MS = 2400;
+const AUDIO_FADE_OUT_MS = 4200;
 const STOP_FADE_MS = 900;
 const AUDIO_FADE_FRAME_MS = 30;
 const masterGainValue = () => Number(volumeSlider.value) / 100;
+const smoothFade = (progress) => progress * progress * (3 - 2 * progress);
 
 function clearAudioFade(audio) {
   if (!audio?.gloryFadeTimer) return;
@@ -59,7 +61,7 @@ function clearAudioFade(audio) {
   audio.gloryFadeTimer = null;
 }
 
-function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_MS, onComplete) {
+function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_IN_MS, onComplete) {
   if (!audio) return;
 
   clearAudioFade(audio);
@@ -68,7 +70,8 @@ function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_MS, onComplete) 
 
   audio.gloryFadeTimer = window.setInterval(() => {
     const progress = Math.min((performance.now() - startedAt) / duration, 1);
-    audio.volume = startVolume + (targetVolume - startVolume) * progress;
+    const easedProgress = smoothFade(progress);
+    audio.volume = startVolume + (targetVolume - startVolume) * easedProgress;
 
     if (progress >= 1) {
       clearAudioFade(audio);
@@ -79,7 +82,7 @@ function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_MS, onComplete) 
 }
 
 function fadeOutAudio(audio, shouldReset = true) {
-  fadeAudioTo(audio, 0, AUDIO_FADE_MS, () => {
+  fadeAudioTo(audio, 0, AUDIO_FADE_OUT_MS, () => {
     audio.pause();
     if (shouldReset) audio.currentTime = 0;
   });
@@ -277,11 +280,11 @@ function playPad(pad) {
     .play()
     .then(() => {
       if (hadSynthPad) stopSynth();
-      fadeAudioTo(audio, masterGainValue());
+      fadeAudioTo(audio, masterGainValue(), AUDIO_FADE_IN_MS);
       if (outgoingAudio) fadeOutAudio(outgoingAudio);
     })
     .catch(() => {
-      activeAudio = null;
+      if (activeAudio === audio) activeAudio = null;
       if (outgoingAudio) fadeOutAudio(outgoingAudio);
       if (hadSynthPad) stopSynth();
       playSynthPad(pad);
