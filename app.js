@@ -16,7 +16,7 @@ const pads = [
 const padLibraries = [
   { id: "foundation", name: "Foundation", folder: "assets/pads-foundations" },
   { id: "organic", name: "Organic", folder: "assets/pads-organic" },
-  { id: "studio", name: "Studio", folder: "assets/pads-studio" },
+  { id: "studio", name: "Studio", folder: "assets/pads-studio", loopDelayMs: 1800 },
 ];
 
 const padsGrid = document.querySelector("#padsGrid");
@@ -105,6 +105,37 @@ function clearAudioFade(audio) {
   audio.gloryFadeTimer = null;
 }
 
+function clearAudioLoopDelay(audio) {
+  if (!audio) return;
+  if (audio.gloryLoopTimer) {
+    window.clearTimeout(audio.gloryLoopTimer);
+    audio.gloryLoopTimer = null;
+  }
+  if (audio.gloryLoopHandler) {
+    audio.removeEventListener("ended", audio.gloryLoopHandler);
+    audio.gloryLoopHandler = null;
+  }
+}
+
+function configureAudioLoop(audio, library) {
+  clearAudioLoopDelay(audio);
+
+  if (!library.loopDelayMs) {
+    audio.loop = true;
+    return;
+  }
+
+  audio.loop = false;
+  audio.gloryLoopHandler = () => {
+    audio.gloryLoopTimer = window.setTimeout(() => {
+      if (!managedAudios.has(audio)) return;
+      audio.currentTime = 0;
+      audio.play().catch(() => managedAudios.delete(audio));
+    }, library.loopDelayMs);
+  };
+  audio.addEventListener("ended", audio.gloryLoopHandler);
+}
+
 function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_IN_MS, onComplete) {
   if (!audio) return;
 
@@ -127,6 +158,7 @@ function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_IN_MS, onComplet
 }
 
 function fadeOutAudio(audio, shouldReset = true) {
+  clearAudioLoopDelay(audio);
   fadeAudioTo(audio, 0, AUDIO_FADE_OUT_MS, () => {
     audio.pause();
     if (shouldReset) audio.currentTime = 0;
@@ -238,6 +270,7 @@ function stopSynth() {
 function stopCurrentPad() {
   if (activeAudio) {
     const audioToStop = activeAudio;
+    clearAudioLoopDelay(audioToStop);
     fadeAudioTo(audioToStop, 0, STOP_FADE_MS, () => {
       audioToStop.pause();
       audioToStop.currentTime = 0;
@@ -325,7 +358,7 @@ function playPad(pad) {
   }
 
   const audio = new Audio(`${currentLibrary.folder}/${encodeURIComponent(file)}`);
-  audio.loop = true;
+  configureAudioLoop(audio, currentLibrary);
   audio.volume = 0;
   activeAudio = audio;
   managedAudios.add(audio);
