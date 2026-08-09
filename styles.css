@@ -276,7 +276,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 22px 24px 18px;
+  padding: 24px 26px 20px;
   border-bottom: 1px solid var(--panel-line);
   background:
     linear-gradient(90deg, color-mix(in srgb, var(--panel) 82%, transparent), transparent),
@@ -330,13 +330,13 @@ button {
 
 .app-brand strong {
   color: rgba(246, 247, 249, 0.96);
-  font-size: 1.16rem;
+  font-size: clamp(1.38rem, 4.8vw, 2rem);
   font-weight: 850;
 }
 
 .app-brand small {
   color: rgba(210, 213, 218, 0.78);
-  font-size: 0.78rem;
+  font-size: clamp(0.82rem, 2.8vw, 1rem);
   font-weight: 760;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -346,9 +346,9 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 0 0 52px;
-  width: 52px;
-  height: 52px;
+  flex: 0 0 60px;
+  width: 60px;
+  height: 60px;
   gap: 4px;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -381,32 +381,6 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.top-action {
-  display: grid;
-  flex: 0 0 auto;
-  width: 52px;
-  height: 52px;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--panel);
-  color: var(--blue);
-  font-size: 1.65rem;
-  font-weight: 800;
-}
-
-.stop-action {
-  background: rgba(255, 255, 255, 0.045);
-  border-color: rgba(210, 210, 210, 0.16);
-}
-
-.stop-action span {
-  width: 11px;
-  height: 11px;
-  border-radius: 3px;
-  background: var(--blue);
 }
 
 .mode-tabs {
@@ -558,8 +532,11 @@ button {
 
 .sounds-view {
   overflow: auto;
-  padding-bottom: 14px;
+  padding-bottom: 20px;
   scrollbar-width: none;
+  background:
+    radial-gradient(circle at 92% 3%, rgba(255, 255, 255, 0.06), transparent 14rem),
+    var(--bg);
 }
 
 .sounds-view::-webkit-scrollbar {
@@ -570,8 +547,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 74px;
-  padding: 12px 24px;
+  min-height: 86px;
+  padding: 16px 26px;
 }
 
 .sounds-heading h2 {
@@ -583,42 +560,59 @@ button {
 }
 
 .sound-section-label {
-  min-height: 40px;
-  padding: 8px 24px;
-  background: #1a1c21;
-  color: var(--muted);
-  font-size: clamp(0.95rem, 3.8vw, 1.45rem);
-  font-weight: 400;
-}
-
-.empty-favorites {
-  min-height: 72px;
-  background: var(--panel-soft);
+  min-height: auto;
+  padding: 12px 26px 10px;
+  background: transparent;
+  color: rgba(210, 213, 218, 0.62);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .library-list {
   display: grid;
+  gap: 10px;
+  padding: 0 18px 18px;
 }
 
 .library-row {
+  position: relative;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  min-height: 72px;
-  padding: 0 24px 0 34px;
-  border-bottom: 1px solid var(--panel-line);
-  background: var(--panel);
-  color: var(--blue);
+  min-height: 82px;
+  padding: 0 20px 0 24px;
+  border: 1px solid rgba(210, 210, 210, 0.08);
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)), var(--panel);
+  color: rgba(225, 228, 232, 0.76);
   text-align: left;
+  animation: soundRowIn 380ms ease both;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.library-row:nth-child(2) {
+  animation-delay: 45ms;
+}
+
+.library-row:nth-child(3) {
+  animation-delay: 90ms;
 }
 
 .library-row.is-selected {
-  background: color-mix(in srgb, var(--blue) 14%, var(--panel));
+  border-color: rgba(235, 237, 240, 0.2);
+  background:
+    radial-gradient(circle at 84% 50%, rgba(255, 255, 255, 0.09), transparent 8rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)),
+    var(--panel-soft);
+  color: rgba(248, 249, 250, 0.96);
 }
 
 .library-row strong {
-  font-size: clamp(1.24rem, 4.5vw, 2.1rem);
-  font-weight: 400;
+  font-size: clamp(1.36rem, 5vw, 2.2rem);
+  font-weight: 430;
 }
 
 .library-row span {
@@ -629,15 +623,18 @@ button {
 }
 
 .library-row.is-selected span {
-  background: var(--green);
-  box-shadow: 0 0 22px rgba(245, 245, 245, 0.72);
+  background: rgba(245, 246, 248, 0.9);
+  box-shadow: 0 0 18px rgba(245, 246, 248, 0.28);
 }
 
 .settings-card {
   display: grid;
-  gap: 14px;
-  padding: 18px 24px 24px;
-  background: #17191d;
+  gap: 18px;
+  margin: 0 18px;
+  padding: 20px;
+  border: 1px solid rgba(210, 210, 210, 0.08);
+  border-radius: 8px;
+  background: rgba(23, 25, 29, 0.84);
 }
 
 .setting-label {
@@ -651,7 +648,7 @@ button {
 
 select {
   width: 100%;
-  min-height: 44px;
+  min-height: 50px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
@@ -661,111 +658,41 @@ select {
 
 input[type="range"] {
   width: 100%;
-  accent-color: var(--blue);
+  height: 32px;
+  accent-color: #e1e4e8;
+}
+
+@keyframes soundRowIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .bottom-bar {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(22px, 8vw, 58px);
-  min-height: 92px;
-  padding: 16px 28px 28px;
+  display: grid;
+  place-items: center;
+  min-height: 68px;
+  padding: 14px 24px max(18px, env(safe-area-inset-bottom));
   border-top: 1px solid rgba(210, 210, 210, 0.08);
   background:
     linear-gradient(180deg, rgba(9, 10, 12, 0.4), rgba(3, 4, 5, 0.94)),
     var(--bg-deep);
 }
 
-.bottom-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  place-items: center;
-  width: 62px;
-  height: 54px;
-  padding: 0;
-  border: 0;
-  border-radius: 12px;
-  background: transparent;
-  color: rgba(218, 220, 224, 0.88);
-  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
-}
-
-.stop-bottom {
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.bottom-button:active {
-  transform: scale(0.96);
-}
-
-.bottom-icon {
-  position: relative;
-  display: block;
-  width: 31px;
-  height: 31px;
-}
-
-.icon-stop {
-  width: 22px;
-  height: 22px;
-  border: 2px solid currentColor;
-  border-radius: 5px;
-}
-
-.icon-sliders,
-.icon-music {
-  color: inherit;
-}
-
-.icon-sliders::before,
-.icon-sliders::after,
-.icon-music::before,
-.icon-music::after {
-  content: "";
-  position: absolute;
-  display: block;
-}
-
-.icon-sliders {
-  background:
-    linear-gradient(currentColor, currentColor) 0 6px / 31px 2px no-repeat,
-    linear-gradient(currentColor, currentColor) 0 15px / 31px 2px no-repeat,
-    linear-gradient(currentColor, currentColor) 0 24px / 31px 2px no-repeat;
-}
-
-.icon-sliders::before {
-  left: 6px;
-  top: 2px;
-  width: 7px;
-  height: 7px;
-  border: 2px solid currentColor;
-  border-radius: 999px;
-  background: var(--bg-deep);
-  box-sizing: border-box;
-  box-shadow: 12px 9px 0 -2px var(--bg-deep), 12px 9px 0 0 currentColor, 5px 18px 0 -2px var(--bg-deep), 5px 18px 0 0 currentColor;
-}
-
-.icon-music::before {
-  left: 18px;
-  top: 2px;
-  width: 9px;
-  height: 21px;
-  border-left: 2px solid currentColor;
-  border-top: 2px solid currentColor;
-  transform: skewY(12deg);
-}
-
-.icon-music::after {
-  left: 3px;
-  bottom: 2px;
-  width: 14px;
-  height: 11px;
-  border: 2px solid currentColor;
-  border-radius: 999px;
-  transform: rotate(-18deg);
+.footer-signature {
+  color: rgba(218, 220, 224, 0.42);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.34em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 @media (min-width: 780px) {
@@ -820,27 +747,15 @@ input[type="range"] {
   }
 
   .mini-wave {
-    flex-basis: 48px;
-    width: 48px;
-    height: 48px;
+    flex-basis: 54px;
+    width: 54px;
+    height: 54px;
     border-radius: 14px;
   }
 
-  .top-action {
-    width: 48px;
-    height: 48px;
-  }
-
   .bottom-bar {
-    min-height: 88px;
-    padding: 14px 22px 26px;
-    gap: clamp(22px, 9vw, 42px);
-  }
-
-  .bottom-button {
-    width: 56px;
-    height: 50px;
-    padding: 0;
+    min-height: 64px;
+    padding-bottom: max(18px, env(safe-area-inset-bottom));
   }
 
   .mode-tab {

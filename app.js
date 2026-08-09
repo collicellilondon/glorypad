@@ -22,8 +22,6 @@ const padLibraries = [
 const padsGrid = document.querySelector("#padsGrid");
 const activeNote = document.querySelector("#activeNote");
 const pulseRing = document.querySelector("#pulseRing");
-const stopButton = document.querySelector("#stopButton");
-const miniStopButton = document.querySelector("#miniStopButton");
 const volumeSlider = document.querySelector("#volume");
 const homeButton = document.querySelector("#homeButton");
 const topHomeButton = document.querySelector("#topHomeButton");
@@ -32,8 +30,6 @@ const homeScreen = document.querySelector("#homeScreen");
 const padsScreen = document.querySelector("#padsScreen");
 const SPLASH_DURATION_MS = 3000;
 const settingsButton = document.querySelector("#settingsButton");
-const bottomSettingsButton = document.querySelector("#bottomSettingsButton");
-const musicButton = document.querySelector("#musicButton");
 const backToLiveButton = document.querySelector("#backToLiveButton");
 const liveView = document.querySelector("#liveView");
 const soundsView = document.querySelector("#soundsView");
@@ -48,6 +44,7 @@ let audioContext = null;
 let synthNodes = null;
 let currentLibrary = padLibraries[0];
 let splashTimer = null;
+const managedAudios = new Set();
 
 const AUDIO_FADE_IN_MS = 2400;
 const AUDIO_FADE_OUT_MS = 4200;
@@ -68,15 +65,16 @@ function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_IN_MS, onComplet
   clearAudioFade(audio);
   const startVolume = audio.volume;
   const startedAt = performance.now();
+  audio.gloryFadeTarget = targetVolume;
 
   audio.gloryFadeTimer = window.setInterval(() => {
     const progress = Math.min((performance.now() - startedAt) / duration, 1);
     const easedProgress = smoothFade(progress);
-    audio.volume = startVolume + (targetVolume - startVolume) * easedProgress;
+    audio.volume = startVolume + (audio.gloryFadeTarget - startVolume) * easedProgress;
 
     if (progress >= 1) {
       clearAudioFade(audio);
-      audio.volume = targetVolume;
+      audio.volume = audio.gloryFadeTarget;
       onComplete?.();
     }
   }, AUDIO_FADE_FRAME_MS);
@@ -86,6 +84,7 @@ function fadeOutAudio(audio, shouldReset = true) {
   fadeAudioTo(audio, 0, AUDIO_FADE_OUT_MS, () => {
     audio.pause();
     if (shouldReset) audio.currentTime = 0;
+    managedAudios.delete(audio);
   });
 }
 
@@ -196,6 +195,7 @@ function stopCurrentPad() {
     fadeAudioTo(audioToStop, 0, STOP_FADE_MS, () => {
       audioToStop.pause();
       audioToStop.currentTime = 0;
+      managedAudios.delete(audioToStop);
     });
     activeAudio = null;
   }
@@ -246,8 +246,11 @@ function playSynthPad(pad) {
 }
 
 function updateVolume() {
+  const nextVolume = masterGainValue();
+
   if (activeAudio) {
-    fadeAudioTo(activeAudio, masterGainValue(), 160);
+    activeAudio.gloryFadeTarget = nextVolume;
+    fadeAudioTo(activeAudio, nextVolume, 120);
   }
 
   if (synthNodes) {
@@ -279,6 +282,7 @@ function playPad(pad) {
   audio.loop = true;
   audio.volume = 0;
   activeAudio = audio;
+  managedAudios.add(audio);
 
   audio
     .play()
@@ -327,11 +331,7 @@ homeConfigButton?.addEventListener("click", () => showPads("sounds"));
 homeButton?.addEventListener("click", showHome);
 topHomeButton.addEventListener("click", showHome);
 settingsButton?.addEventListener("click", () => showPads("sounds"));
-bottomSettingsButton.addEventListener("click", () => setView("sounds"));
 backToLiveButton.addEventListener("click", () => setView("live"));
-musicButton.addEventListener("click", () => setView("live"));
-stopButton.addEventListener("click", stopCurrentPad);
-miniStopButton.addEventListener("click", stopCurrentPad);
 volumeSlider.addEventListener("input", updateVolume);
 
 toneSelect.addEventListener("change", () => {
