@@ -34,6 +34,7 @@ const backToLiveButton = document.querySelector("#backToLiveButton");
 const liveView = document.querySelector("#liveView");
 const soundsView = document.querySelector("#soundsView");
 const toneSelect = document.querySelector("#toneSelect");
+const languageSelect = document.querySelector("#languageSelect");
 const libraryList = document.querySelector("#libraryList");
 const miniLibraryName = document.querySelector("#miniLibraryName");
 const modeTabs = document.querySelectorAll("[data-view]");
@@ -45,6 +46,50 @@ let synthNodes = null;
 let currentLibrary = padLibraries[0];
 let splashTimer = null;
 const managedAudios = new Set();
+let currentLanguage = localStorage.getItem("gloryPadLanguage") || "pt-BR";
+
+const translations = {
+  "pt-BR": {
+    activePad: "Pad ativo",
+    appEntry: "Entrada do app",
+    appModes: "Modos do app",
+    backToEntry: "Voltar para entrada",
+    backToLive: "Voltar ao vivo",
+    collections: "Coleções",
+    keyRelative: "Tom / relativa",
+    language: "Idioma",
+    live: "Ao Vivo",
+    livePads: "Pads ao vivo",
+    none: "Nenhum",
+    soundList: "Lista de sons",
+    sounds: "Sons",
+    twelveKeys: "Pads das 12 tonalidades",
+    volume: "Volume",
+  },
+  en: {
+    activePad: "Active pad",
+    appEntry: "App intro",
+    appModes: "App modes",
+    backToEntry: "Back to intro",
+    backToLive: "Back to live",
+    collections: "Collections",
+    keyRelative: "Key / relative",
+    language: "Language",
+    live: "Live",
+    livePads: "Live pads",
+    none: "None",
+    soundList: "Sound list",
+    sounds: "Sounds",
+    twelveKeys: "Pads for the 12 keys",
+    volume: "Volume",
+  },
+};
+
+const libraryNames = {
+  foundation: { "pt-BR": "Base", en: "Foundation" },
+  organic: { "pt-BR": "Orgânico", en: "Organic" },
+  studio: { "pt-BR": "Estúdio", en: "Studio" },
+};
 
 const AUDIO_FADE_IN_MS = 2400;
 const AUDIO_FADE_OUT_MS = 4200;
@@ -52,6 +97,7 @@ const STOP_FADE_MS = 900;
 const AUDIO_FADE_FRAME_MS = 30;
 const masterGainValue = () => Number(volumeSlider.value) / 100;
 const smoothFade = (progress) => progress * progress * (3 - 2 * progress);
+const t = (key) => translations[currentLanguage]?.[key] || translations["pt-BR"][key] || key;
 
 function clearAudioFade(audio) {
   if (!audio?.gloryFadeTimer) return;
@@ -146,7 +192,7 @@ function renderLibraries() {
     .map(
       (library) => `
         <button class="library-row" type="button" data-library-id="${library.id}" aria-pressed="${library.id === currentLibrary.id}">
-          <strong>${library.name}</strong>
+          <strong>${libraryNames[library.id]?.[currentLanguage] || library.name}</strong>
           <span aria-hidden="true"></span>
         </button>
       `,
@@ -156,7 +202,7 @@ function renderLibraries() {
 }
 
 function updateLibraryUi() {
-  miniLibraryName.textContent = currentLibrary.name;
+  miniLibraryName.textContent = libraryNames[currentLibrary.id]?.[currentLanguage] || currentLibrary.name;
 
   document.querySelectorAll("[data-library-id]").forEach((button) => {
     const isSelected = button.dataset.libraryId === currentLibrary.id;
@@ -172,7 +218,7 @@ function setActivePad(nextPad) {
     button.setAttribute("aria-pressed", String(Boolean(isActive)));
   });
 
-  activeNote.textContent = nextPad ? `${nextPad.label}/${nextPad.relative}` : "Nenhum";
+  activeNote.textContent = nextPad ? `${nextPad.label}/${nextPad.relative}` : t("none");
   pulseRing.classList.toggle("is-on", Boolean(nextPad));
   if (nextPad) toneSelect.value = String(pads.indexOf(nextPad));
   activePad = nextPad;
@@ -305,10 +351,29 @@ function selectLibrary(libraryId) {
   stopCurrentPad();
 }
 
+function applyLanguage(language) {
+  currentLanguage = translations[language] ? language : "pt-BR";
+  document.documentElement.lang = currentLanguage;
+  localStorage.setItem("gloryPadLanguage", currentLanguage);
+  languageSelect.value = currentLanguage;
+
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+
+  document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAria));
+  });
+
+  renderLibraries();
+  setActivePad(activePad);
+}
+
 renderPads();
 renderToneOptions();
 renderLibraries();
 lockDarkTheme();
+applyLanguage(currentLanguage);
 splashTimer = window.setTimeout(() => showPads("live"), SPLASH_DURATION_MS);
 
 padsGrid.addEventListener("click", (event) => {
@@ -333,6 +398,7 @@ topHomeButton.addEventListener("click", showHome);
 settingsButton?.addEventListener("click", () => showPads("sounds"));
 backToLiveButton.addEventListener("click", () => setView("live"));
 volumeSlider.addEventListener("input", updateVolume);
+languageSelect.addEventListener("change", () => applyLanguage(languageSelect.value));
 
 toneSelect.addEventListener("change", () => {
   playPad(pads[Number(toneSelect.value)]);

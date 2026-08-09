@@ -15,11 +15,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=glorypad-13" />
+    <link rel="stylesheet" href="styles.css?v=glorypad-14" />
   </head>
   <body>
     <main>
-      <section class="cover-screen" id="homeScreen" aria-label="Entrada do app">
+      <section class="cover-screen" id="homeScreen" aria-label="Entrada do app" data-i18n-aria="appEntry">
         <div class="ambient-field" aria-hidden="true">
           <span></span>
           <span></span>
@@ -47,7 +47,7 @@
       <section class="app-shell is-hidden" id="padsScreen" aria-label="GloryPad">
         <div class="phone-shell">
           <header class="app-topbar">
-            <button class="app-brand" id="topHomeButton" type="button" aria-label="Voltar para entrada">
+            <button class="app-brand" id="topHomeButton" type="button" aria-label="Voltar para entrada" data-i18n-aria="backToEntry">
               <span class="mini-wave" aria-hidden="true">
                 <i></i>
                 <i></i>
@@ -62,43 +62,51 @@
             </button>
           </header>
 
-          <nav class="mode-tabs" aria-label="Modos do app">
-            <button class="mode-tab is-active" type="button" data-view="live">Ao Vivo</button>
-            <button class="mode-tab" type="button" data-view="sounds">Sons</button>
+          <nav class="mode-tabs" aria-label="Modos do app" data-i18n-aria="appModes">
+            <button class="mode-tab is-active" type="button" data-view="live" data-i18n="live">Ao Vivo</button>
+            <button class="mode-tab" type="button" data-view="sounds" data-i18n="sounds">Sons</button>
           </nav>
 
-          <section class="view-panel live-view" id="liveView" aria-label="Pads ao vivo">
+          <section class="view-panel live-view" id="liveView" aria-label="Pads ao vivo" data-i18n-aria="livePads">
             <div class="active-strip">
               <div class="pulse-ring" id="pulseRing" aria-hidden="true"></div>
               <div>
-                <p>Pad ativo</p>
+                <p data-i18n="activePad">Pad ativo</p>
                 <strong id="activeNote">Nenhum</strong>
               </div>
             </div>
 
-            <section class="pads-grid" id="padsGrid" aria-label="Pads das 12 tonalidades"></section>
+            <section class="pads-grid" id="padsGrid" aria-label="Pads das 12 tonalidades" data-i18n-aria="twelveKeys"></section>
           </section>
 
-          <section class="view-panel sounds-view is-hidden" id="soundsView" aria-label="Lista de sons">
+          <section class="view-panel sounds-view is-hidden" id="soundsView" aria-label="Lista de sons" data-i18n-aria="soundList">
             <div class="sounds-heading">
-              <h2>Sons</h2>
-              <button class="icon-text chevron-button" type="button" id="backToLiveButton" aria-label="Voltar ao vivo">
+              <h2 data-i18n="sounds">Sons</h2>
+              <button class="icon-text chevron-button" type="button" id="backToLiveButton" aria-label="Voltar ao vivo" data-i18n-aria="backToLive">
                 <span aria-hidden="true"></span>
               </button>
             </div>
 
-            <div class="sound-section-label">Colecoes</div>
+            <div class="sound-section-label" data-i18n="collections">Coleções</div>
             <div class="library-list" id="libraryList"></div>
 
             <div class="settings-card" id="configPanel">
               <div>
-                <p class="setting-label">Tom / relativa</p>
+                <p class="setting-label" data-i18n="keyRelative">Tom / relativa</p>
                 <select id="toneSelect"></select>
               </div>
 
               <div>
-                <p class="setting-label">Volume</p>
+                <p class="setting-label" data-i18n="volume">Volume</p>
                 <input id="volume" type="range" min="0" max="100" value="75" />
+              </div>
+
+              <div>
+                <p class="setting-label" data-i18n="language">Idioma</p>
+                <select id="languageSelect" aria-label="Idioma" data-i18n-aria="language">
+                  <option value="pt-BR">Português</option>
+                  <option value="en">English</option>
+                </select>
               </div>
             </div>
           </section>
@@ -110,6 +118,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=glorypad-13"></script>
+    <script src="app.js?v=glorypad-14"></script>
   </body>
 </html>
