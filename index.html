@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GloryPad</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=glorypad-5" />
+  </head>
+  <body>
+    <main>
+      <section class="cover-screen" id="homeScreen" aria-label="Entrada do app">
+        <div class="ambient-field" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="cover-stage">
+          <div class="glory-logo" aria-label="Logo GloryPad">
+            <span class="glory-bars" aria-hidden="true">
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+              <i></i>
+            </span>
+            <strong>GLORY<span>PAD</span></strong>
+            <small><span></span>SOUND THAT LIFTS<span></span></small>
+          </div>
+
+          <div class="cover-actions">
+            <button class="primary-action" id="startButton" type="button">Entrar</button>
+          </div>
+        </div>
+        <small class="home-watermark" aria-hidden="true">ColliDev</small>
+      </section>
+
+      <section class="app-shell is-hidden" id="padsScreen" aria-label="GloryPad">
+        <div class="phone-shell">
+          <header class="app-topbar">
+            <button class="app-brand" id="topHomeButton" type="button" aria-label="Voltar para entrada">
+              <span class="mini-wave" aria-hidden="true">
+                <i></i>
+                <i></i>
+                <i></i>
+                <i></i>
+                <i></i>
+              </span>
+              <span>
+                <strong>GloryPad</strong>
+                <small id="miniLibraryName">Ambient</small>
+              </span>
+            </button>
+
+            <button class="top-action stop-action" type="button" id="miniStopButton" aria-label="Parar pad">
+              <span aria-hidden="true"></span>
+            </button>
+          </header>
+
+          <nav class="mode-tabs" aria-label="Modos do app">
+            <button class="mode-tab is-active" type="button" data-view="live">Ao Vivo</button>
+            <button class="mode-tab" type="button" data-view="sounds">Sons</button>
+          </nav>
+
+          <section class="view-panel live-view" id="liveView" aria-label="Pads ao vivo">
+            <div class="active-strip">
+              <div class="pulse-ring" id="pulseRing" aria-hidden="true"></div>
+              <div>
+                <p>Pad ativo</p>
+                <strong id="activeNote">Nenhum</strong>
+              </div>
+            </div>
+
+            <section class="pads-grid" id="padsGrid" aria-label="Pads das 12 tonalidades"></section>
+          </section>
+
+          <section class="view-panel sounds-view is-hidden" id="soundsView" aria-label="Lista de sons">
+            <div class="sounds-heading">
+              <h2>Sons</h2>
+              <button class="icon-text chevron-button" type="button" id="backToLiveButton" aria-label="Voltar ao vivo">
+                <span aria-hidden="true"></span>
+              </button>
+            </div>
+
+            <div class="sound-section-label">Favorites</div>
+            <div class="empty-favorites"></div>
+
+            <div class="sound-section-label">Factory</div>
+            <div class="library-list" id="libraryList"></div>
+
+            <div class="settings-card" id="configPanel">
+              <div>
+                <p class="setting-label">Tom / relativa</p>
+                <select id="toneSelect"></select>
+              </div>
+
+              <div>
+                <p class="setting-label">Volume</p>
+                <input id="volume" type="range" min="0" max="100" value="75" />
+              </div>
+            </div>
+          </section>
+
+          <footer class="bottom-bar" aria-label="Controles inferiores">
+            <small class="footer-watermark" aria-hidden="true">ColliDev</small>
+            <button class="bottom-button" id="bottomSettingsButton" type="button" aria-label="Sons e configuracao">
+              <span>Sons</span>
+            </button>
+            <button class="bottom-button stop-bottom" id="stopButton" type="button" aria-label="Parar pad ativo">
+              <i aria-hidden="true"></i>
+              <span>Parar</span>
+            </button>
+            <button class="bottom-button" id="musicButton" type="button" aria-label="Ao vivo">
+              <span>Ao Vivo</span>
+            </button>
+          </footer>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js?v=glorypad-5"></script>
+  </body>
+</html>
