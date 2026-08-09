@@ -65,7 +65,7 @@ button {
 
 .home-watermark {
   position: fixed;
-  left: 50%;
+  left: calc(50% + clamp(18px, 3.6vw, 34px));
   bottom: max(18px, calc(env(safe-area-inset-bottom) + 10px));
   z-index: 4;
   transform: translateX(-50%);
@@ -273,7 +273,7 @@ button {
 
 .cover-actions {
   position: fixed;
-  left: 50%;
+  left: calc(50% + clamp(18px, 3.6vw, 34px));
   top: calc(50svh + 155px);
   z-index: 3;
   transform: translateX(-50%);
@@ -810,11 +810,15 @@ input[type="range"] {
   }
 
   .cover-actions {
-    left: 50%;
+    left: calc(50% + 28px);
     top: calc(50svh + 118px);
     width: 100%;
     display: flex;
     justify-content: center;
+  }
+
+  .home-watermark {
+    left: calc(50% + 28px);
   }
 
   .primary-action {
