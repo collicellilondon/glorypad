@@ -5,6 +5,7 @@ import "./globals.css";
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://glorypad.vercel.app"),
   title: "GloryPad — Sound That Lifts",
   description: "Pads ambientes contínuos para músicos, louvor, adoração e momentos de oração.",
   icons: { icon: "/favicon.svg" },
