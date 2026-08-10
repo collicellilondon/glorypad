@@ -16,7 +16,7 @@ const pads = [
 const padLibraries = [
   { id: "foundation", name: "Foundation", folder: "assets/pads-foundations" },
   { id: "organic", name: "Organic", folder: "assets/pads-organic" },
-  { id: "studio", name: "Studio", folder: "assets/pads-studio" },
+  { id: "studio", name: "Studio", folder: "assets/pads-studio", loopCrossfadeMs: 8000 },
 ];
 
 const padsGrid = document.querySelector("#padsGrid");
@@ -105,13 +105,78 @@ function clearAudioFade(audio) {
   audio.gloryFadeTimer = null;
 }
 
-function configureAudioLoop(audio) {
-  audio.loop = true;
+function clearAudioLoop(audio) {
+  if (!audio) return;
+
+  if (audio.gloryLoopTimer) {
+    window.clearTimeout(audio.gloryLoopTimer);
+    audio.gloryLoopTimer = null;
+  }
+
+  if (audio.gloryLoopHandler) {
+    audio.removeEventListener("loadedmetadata", audio.gloryLoopHandler);
+    audio.gloryLoopHandler = null;
+  }
+}
+
+function configureAudioLoop(audio, library) {
+  clearAudioLoop(audio);
+
+  if (!library.loopCrossfadeMs) {
+    audio.loop = true;
+    return;
+  }
+
+  audio.loop = false;
+  audio.gloryLoopHandler = () => scheduleSeamlessLoop(audio, library);
+
+  if (Number.isFinite(audio.duration) && audio.duration > 0) {
+    audio.gloryLoopHandler();
+  } else {
+    audio.addEventListener("loadedmetadata", audio.gloryLoopHandler, { once: true });
+  }
+}
+
+function scheduleSeamlessLoop(audio, library) {
+  if (!managedAudios.has(audio) || audio.gloryIsFadingOut) return;
+
+  const durationMs = Number.isFinite(audio.duration) ? audio.duration * 1000 : 0;
+  if (!durationMs) {
+    audio.gloryLoopTimer = window.setTimeout(() => scheduleSeamlessLoop(audio, library), 500);
+    return;
+  }
+
+  const crossfadeMs = Math.min(library.loopCrossfadeMs, durationMs * 0.4);
+  const nextStartDelayMs = Math.max(durationMs - crossfadeMs, 0);
+
+  audio.gloryLoopTimer = window.setTimeout(() => {
+    if (!managedAudios.has(audio) || audio.gloryIsFadingOut) return;
+
+    const nextAudio = new Audio(audio.currentSrc || audio.src);
+    configureAudioLoop(nextAudio, library);
+    nextAudio.volume = 0;
+    nextAudio.gloryFadeTarget = masterGainValue();
+    managedAudios.add(nextAudio);
+    activeAudio = nextAudio;
+
+    nextAudio
+      .play()
+      .then(() => {
+        fadeAudioTo(nextAudio, masterGainValue(), crossfadeMs);
+        fadeOutAndDispose(audio, crossfadeMs);
+      })
+      .catch(() => {
+        managedAudios.delete(nextAudio);
+        if (activeAudio === nextAudio) activeAudio = audio;
+        audio.loop = true;
+      });
+  }, nextStartDelayMs);
 }
 
 function fadeOutAndDispose(audio, duration, shouldReset = true) {
   if (!audio) return;
   audio.gloryIsFadingOut = true;
+  clearAudioLoop(audio);
   fadeAudioTo(audio, 0, duration, () => {
     audio.pause();
     if (shouldReset) audio.currentTime = 0;
@@ -336,7 +401,7 @@ function playPad(pad) {
   }
 
   const audio = new Audio(`${currentLibrary.folder}/${encodeURIComponent(file)}`);
-  configureAudioLoop(audio);
+  configureAudioLoop(audio, currentLibrary);
   audio.volume = 0;
   activeAudio = audio;
   managedAudios.add(audio);
