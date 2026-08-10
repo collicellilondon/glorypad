@@ -16,7 +16,7 @@ const pads = [
 const padLibraries = [
   { id: "foundation", name: "Foundation", folder: "assets/pads-foundations" },
   { id: "organic", name: "Organic", folder: "assets/pads-organic" },
-  { id: "studio", name: "Studio", folder: "assets/pads-studio", loopCrossfadeMs: 10000 },
+  { id: "studio", name: "Studio", folder: "assets/pads-studio" },
 ];
 
 const padsGrid = document.querySelector("#padsGrid");
@@ -105,71 +105,13 @@ function clearAudioFade(audio) {
   audio.gloryFadeTimer = null;
 }
 
-function clearAudioLoopDelay(audio) {
-  if (!audio) return;
-  if (audio.gloryLoopTimer) {
-    window.clearTimeout(audio.gloryLoopTimer);
-    audio.gloryLoopTimer = null;
-  }
-  if (audio.gloryLoopHandler) {
-    audio.removeEventListener("loadedmetadata", audio.gloryLoopHandler);
-    audio.gloryLoopHandler = null;
-  }
-}
-
-function configureAudioLoop(audio, library) {
-  clearAudioLoopDelay(audio);
-
-  if (!library.loopCrossfadeMs) {
-    audio.loop = true;
-    return;
-  }
-
-  audio.loop = false;
-  audio.gloryLoopHandler = () => scheduleCrossfadeLoop(audio, library);
-  audio.addEventListener("loadedmetadata", audio.gloryLoopHandler, { once: true });
-}
-
-function scheduleCrossfadeLoop(audio, library) {
-  if (!managedAudios.has(audio)) return;
-
-  const durationMs = Number.isFinite(audio.duration) ? audio.duration * 1000 : 0;
-  if (!durationMs) {
-    audio.gloryLoopTimer = window.setTimeout(() => scheduleCrossfadeLoop(audio, library), 500);
-    return;
-  }
-
-  const crossfadeMs = Math.min(library.loopCrossfadeMs, durationMs * 0.45);
-  const startNextAtMs = Math.max(durationMs - crossfadeMs, 0);
-
-  audio.gloryLoopTimer = window.setTimeout(() => {
-    if (!managedAudios.has(audio)) return;
-
-    const nextAudio = new Audio(audio.currentSrc || audio.src);
-    configureAudioLoop(nextAudio, library);
-    nextAudio.volume = 0;
-    nextAudio.gloryFadeTarget = masterGainValue();
-    managedAudios.add(nextAudio);
-    activeAudio = nextAudio;
-
-    nextAudio
-      .play()
-      .then(() => {
-        fadeAudioTo(nextAudio, masterGainValue(), crossfadeMs);
-        fadeOutAndDispose(audio, crossfadeMs);
-      })
-      .catch(() => {
-        managedAudios.delete(nextAudio);
-        if (activeAudio === nextAudio) activeAudio = audio;
-        scheduleCrossfadeLoop(audio, library);
-      });
-  }, startNextAtMs);
+function configureAudioLoop(audio) {
+  audio.loop = true;
 }
 
 function fadeOutAndDispose(audio, duration, shouldReset = true) {
   if (!audio) return;
   audio.gloryIsFadingOut = true;
-  clearAudioLoopDelay(audio);
   fadeAudioTo(audio, 0, duration, () => {
     audio.pause();
     if (shouldReset) audio.currentTime = 0;
@@ -394,7 +336,7 @@ function playPad(pad) {
   }
 
   const audio = new Audio(`${currentLibrary.folder}/${encodeURIComponent(file)}`);
-  configureAudioLoop(audio, currentLibrary);
+  configureAudioLoop(audio);
   audio.volume = 0;
   activeAudio = audio;
   managedAudios.add(audio);
