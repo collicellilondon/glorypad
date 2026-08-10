@@ -91,12 +91,12 @@ const libraryNames = {
   studio: { "pt-BR": "Estúdio", en: "Studio" },
 };
 
-const AUDIO_FADE_IN_MS = 2400;
-const AUDIO_FADE_OUT_MS = 4200;
-const STOP_FADE_MS = 900;
+const AUDIO_FADE_IN_MS = 5200;
+const AUDIO_FADE_OUT_MS = 9200;
+const STOP_FADE_MS = 1400;
 const AUDIO_FADE_FRAME_MS = 30;
 const masterGainValue = () => Number(volumeSlider.value) / 100;
-const smoothFade = (progress) => progress * progress * (3 - 2 * progress);
+const smoothFade = (progress) => progress * progress * progress * (progress * (progress * 6 - 15) + 10);
 const t = (key) => translations[currentLanguage]?.[key] || translations["pt-BR"][key] || key;
 
 function clearAudioFade(audio) {
