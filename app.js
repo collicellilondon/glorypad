@@ -16,7 +16,7 @@ const pads = [
 const padLibraries = [
   { id: "foundation", name: "Foundation", folder: "assets/pads-foundations" },
   { id: "organic", name: "Organic", folder: "assets/pads-organic" },
-  { id: "studio", name: "Studio", folder: "assets/pads-studio", loopDelayMs: 1800 },
+  { id: "studio", name: "Studio", folder: "assets/pads-studio", loopCrossfadeMs: 10000 },
 ];
 
 const padsGrid = document.querySelector("#padsGrid");
@@ -112,7 +112,7 @@ function clearAudioLoopDelay(audio) {
     audio.gloryLoopTimer = null;
   }
   if (audio.gloryLoopHandler) {
-    audio.removeEventListener("ended", audio.gloryLoopHandler);
+    audio.removeEventListener("loadedmetadata", audio.gloryLoopHandler);
     audio.gloryLoopHandler = null;
   }
 }
@@ -120,20 +120,69 @@ function clearAudioLoopDelay(audio) {
 function configureAudioLoop(audio, library) {
   clearAudioLoopDelay(audio);
 
-  if (!library.loopDelayMs) {
+  if (!library.loopCrossfadeMs) {
     audio.loop = true;
     return;
   }
 
   audio.loop = false;
-  audio.gloryLoopHandler = () => {
-    audio.gloryLoopTimer = window.setTimeout(() => {
-      if (!managedAudios.has(audio)) return;
-      audio.currentTime = 0;
-      audio.play().catch(() => managedAudios.delete(audio));
-    }, library.loopDelayMs);
-  };
-  audio.addEventListener("ended", audio.gloryLoopHandler);
+  audio.gloryLoopHandler = () => scheduleCrossfadeLoop(audio, library);
+  audio.addEventListener("loadedmetadata", audio.gloryLoopHandler, { once: true });
+}
+
+function scheduleCrossfadeLoop(audio, library) {
+  if (!managedAudios.has(audio)) return;
+
+  const durationMs = Number.isFinite(audio.duration) ? audio.duration * 1000 : 0;
+  if (!durationMs) {
+    audio.gloryLoopTimer = window.setTimeout(() => scheduleCrossfadeLoop(audio, library), 500);
+    return;
+  }
+
+  const crossfadeMs = Math.min(library.loopCrossfadeMs, durationMs * 0.45);
+  const startNextAtMs = Math.max(durationMs - crossfadeMs, 0);
+
+  audio.gloryLoopTimer = window.setTimeout(() => {
+    if (!managedAudios.has(audio)) return;
+
+    const nextAudio = new Audio(audio.currentSrc || audio.src);
+    configureAudioLoop(nextAudio, library);
+    nextAudio.volume = 0;
+    nextAudio.gloryFadeTarget = masterGainValue();
+    managedAudios.add(nextAudio);
+    activeAudio = nextAudio;
+
+    nextAudio
+      .play()
+      .then(() => {
+        fadeAudioTo(nextAudio, masterGainValue(), crossfadeMs);
+        fadeOutAndDispose(audio, crossfadeMs);
+      })
+      .catch(() => {
+        managedAudios.delete(nextAudio);
+        if (activeAudio === nextAudio) activeAudio = audio;
+        scheduleCrossfadeLoop(audio, library);
+      });
+  }, startNextAtMs);
+}
+
+function fadeOutAndDispose(audio, duration, shouldReset = true) {
+  if (!audio) return;
+  audio.gloryIsFadingOut = true;
+  clearAudioLoopDelay(audio);
+  fadeAudioTo(audio, 0, duration, () => {
+    audio.pause();
+    if (shouldReset) audio.currentTime = 0;
+    managedAudios.delete(audio);
+    audio.gloryIsFadingOut = false;
+    if (activeAudio === audio) activeAudio = null;
+  });
+}
+
+function fadeOutAllManagedAudios(duration = STOP_FADE_MS) {
+  [...managedAudios].forEach((audio) => {
+    fadeOutAndDispose(audio, duration);
+  });
 }
 
 function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_IN_MS, onComplete) {
@@ -158,12 +207,7 @@ function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_IN_MS, onComplet
 }
 
 function fadeOutAudio(audio, shouldReset = true) {
-  clearAudioLoopDelay(audio);
-  fadeAudioTo(audio, 0, AUDIO_FADE_OUT_MS, () => {
-    audio.pause();
-    if (shouldReset) audio.currentTime = 0;
-    managedAudios.delete(audio);
-  });
+  fadeOutAndDispose(audio, AUDIO_FADE_OUT_MS, shouldReset);
 }
 
 function lockDarkTheme() {
@@ -268,17 +312,8 @@ function stopSynth() {
 }
 
 function stopCurrentPad() {
-  if (activeAudio) {
-    const audioToStop = activeAudio;
-    clearAudioLoopDelay(audioToStop);
-    fadeAudioTo(audioToStop, 0, STOP_FADE_MS, () => {
-      audioToStop.pause();
-      audioToStop.currentTime = 0;
-      managedAudios.delete(audioToStop);
-    });
-    activeAudio = null;
-  }
-
+  fadeOutAllManagedAudios();
+  activeAudio = null;
   stopSynth();
   setActivePad(null);
 }
@@ -327,10 +362,11 @@ function playSynthPad(pad) {
 function updateVolume() {
   const nextVolume = masterGainValue();
 
-  if (activeAudio) {
-    activeAudio.gloryFadeTarget = nextVolume;
-    fadeAudioTo(activeAudio, nextVolume, 120);
-  }
+  [...managedAudios].forEach((audio) => {
+    if (audio.gloryIsFadingOut) return;
+    audio.gloryFadeTarget = nextVolume;
+    fadeAudioTo(audio, nextVolume, 120);
+  });
 
   if (synthNodes) {
     synthNodes.gain.gain.setTargetAtTime(masterGainValue() * 0.34, audioContext.currentTime, 0.08);
@@ -343,14 +379,14 @@ function playPad(pad) {
     return;
   }
 
-  const outgoingAudio = activeAudio;
+  const outgoingAudios = [...managedAudios];
   const hadSynthPad = Boolean(synthNodes);
 
   setActivePad(pad);
 
   const file = pad.files[currentLibrary.id];
   if (!file) {
-    if (outgoingAudio) fadeOutAudio(outgoingAudio);
+    outgoingAudios.forEach((audio) => fadeOutAudio(audio));
     if (hadSynthPad) stopSynth();
     activeAudio = null;
     playSynthPad(pad);
@@ -368,11 +404,11 @@ function playPad(pad) {
     .then(() => {
       if (hadSynthPad) stopSynth();
       fadeAudioTo(audio, masterGainValue(), AUDIO_FADE_IN_MS);
-      if (outgoingAudio) fadeOutAudio(outgoingAudio);
+      outgoingAudios.forEach((outgoingAudio) => fadeOutAudio(outgoingAudio));
     })
     .catch(() => {
       if (activeAudio === audio) activeAudio = null;
-      if (outgoingAudio) fadeOutAudio(outgoingAudio);
+      outgoingAudios.forEach((outgoingAudio) => fadeOutAudio(outgoingAudio));
       if (hadSynthPad) stopSynth();
       playSynthPad(pad);
     });
