@@ -1,0 +1,9 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { BrandMark, Footer, SUPPORT_EMAIL } from "../components/site";
+
+export const metadata: Metadata = { title: "Política de Privacidade — GloryPad", description: "Política de Privacidade do aplicativo GloryPad." };
+
+export default function PrivacyPage() {
+  return <main><header className="nav shell"><Link href="/" aria-label="Voltar para o início"><BrandMark compact /></Link><Link className="back-link" href="/">Voltar ao início</Link></header><article className="legal-page shell"><p className="section-label">Última atualização: 10 de agosto de 2026</p><h1>Política de Privacidade</h1><p className="legal-intro">Sua privacidade é importante. Esta política explica, de forma objetiva, como o GloryPad trata informações durante o uso do aplicativo.</p><section><h2>Coleta de dados</h2><p>O GloryPad não coleta dados pessoais. O aplicativo não exige cadastro ou login e não solicita informações que permitam identificar você.</p></section><section><h2>Venda e compartilhamento</h2><p>Como nenhum dado pessoal é coletado, o GloryPad não vende, aluga ou compartilha dados pessoais com terceiros.</p></section><section><h2>Serviços externos e rastreamento</h2><p>O GloryPad não utiliza ferramentas de analytics, publicidade, rastreamento ou cookies para monitorar o uso do aplicativo.</p></section><section><h2>Alterações nesta política</h2><p>Esta política poderá ser atualizada caso os recursos do aplicativo mudem. A versão mais recente estará sempre disponível nesta página, com a data de atualização indicada acima.</p></section><section><h2>Contato</h2><p>Em caso de dúvidas sobre esta Política de Privacidade, escreva para <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.</p></section></article><Footer /></main>;
+}
