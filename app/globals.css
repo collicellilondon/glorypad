@@ -3,7 +3,7 @@
 :root { --bg:#070708; --surface:#0d0e10; --surface-2:#131417; --line:#242529; --text:#f3f3f1; --muted:#9b9da3; --soft:#c8c9cc; color-scheme:dark; }
 * { box-sizing:border-box; }
 html { scroll-behavior:smooth; }
-body { margin:0; background:var(--bg); color:var(--text); font-family:var(--font-geist),Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+body { margin:0; background:var(--bg); color:var(--text); font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; -webkit-font-smoothing:antialiased; }
 a { color:inherit; text-decoration:none; }
 button,summary,a { -webkit-tap-highlight-color:transparent; }
 .shell { width:min(1180px,calc(100% - 48px)); margin-inline:auto; }
@@ -11,13 +11,16 @@ button,summary,a { -webkit-tap-highlight-color:transparent; }
 .nav nav,.footer nav { display:flex; gap:30px; color:var(--muted); font-size:14px; }
 .nav nav a,.footer nav a,.back-link { transition:color .2s ease; }
 .nav nav a:hover,.footer nav a:hover,.back-link:hover { color:var(--text); }
-.brand { display:inline-flex; align-items:center; gap:12px; font-size:20px; font-weight:650; letter-spacing:-.03em; }
-.brand > span:last-child { display:flex; flex-direction:column; }
-.brand small { margin-top:2px; color:#777980; font-size:7px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; }
-.soundmark { width:34px; height:34px; border:1px solid var(--line); border-radius:9px; display:flex; align-items:center; justify-content:center; gap:2px; background:#101115; }
-.soundmark i { display:block; width:2px; height:10px; border-radius:2px; background:#d5d5d7; }
-.soundmark i:nth-child(2),.soundmark i:nth-child(4) { height:17px; }
-.soundmark i:nth-child(3) { height:23px; }
+.brand { display:inline-flex; align-items:center; gap:13px; }
+.brand-copy { display:flex; flex-direction:column; }
+.brand-name { display:flex; align-items:baseline; color:#777980; font-size:18px; font-weight:450; letter-spacing:.15em; line-height:1; }
+.brand-name strong { color:#f2f2f1; font-weight:760; letter-spacing:.12em; }
+.brand small { margin-top:5px; color:#707278; font-size:6px; font-weight:600; letter-spacing:.3em; text-transform:uppercase; }
+.soundmark { width:42px; height:42px; border:1px solid var(--line); border-radius:10px; display:flex; align-items:center; justify-content:center; gap:2px; background:#101115; }
+.soundmark i { display:block; width:2px; height:9px; border-radius:2px; background:#d5d5d7; }
+.soundmark i:nth-child(2),.soundmark i:nth-child(6) { height:14px; }
+.soundmark i:nth-child(3),.soundmark i:nth-child(5) { height:21px; }
+.soundmark i:nth-child(4) { height:27px; }
 .hero { min-height:760px; display:grid; grid-template-columns:1.16fr .84fr; align-items:center; gap:80px; padding-block:96px; }
 .hero-copy { max-width:720px; }
 .eyebrow,.section-label { margin:0 0 24px; color:#87898f; font-size:12px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; }

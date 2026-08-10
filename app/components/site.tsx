@@ -9,7 +9,7 @@ const faqs = [
 ];
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
-  return <span className={`brand ${compact ? "compact" : ""}`}><span className="soundmark" aria-hidden="true"><i /><i /><i /><i /><i /></span><span>GloryPad<small>Sound That Lifts</small></span></span>;
+  return <span className={`brand ${compact ? "compact" : ""}`}><span className="soundmark" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /></span><span className="brand-copy"><span className="brand-name"><strong>GLORY</strong><span>PAD</span></span><small>Sound That Lifts</small></span></span>;
 }
 
 export function SupportContent({ headingId }: { headingId: string }) {
