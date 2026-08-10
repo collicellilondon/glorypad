@@ -1,22 +1,23 @@
 const pads = [
-  { label: "C", relative: "Am", source: "D\u00f3", files: { ambient: "D\u00f3.wav", foundation: "C.mp3", organic: "C.mp3", studio: "C.mp3" }, frequency: 261.63 },
-  { label: "C#", relative: "A#m", source: "D\u00f3#", files: { ambient: "D\u00f3#.wav", foundation: "C#.mp3", organic: "Db.mp3", studio: "Cs.mp3" }, frequency: 277.18 },
-  { label: "D", relative: "Bm", source: "R\u00e9", files: { ambient: "R\u00e9.wav", foundation: "D.mp3", organic: "D.mp3", studio: "D.mp3" }, frequency: 293.66 },
-  { label: "D#", relative: "Cm", source: "R\u00e9#", files: { ambient: "R\u00e9#.wav", foundation: "Eb.mp3", organic: "Eb.mp3", studio: "Ds.mp3" }, frequency: 311.13 },
-  { label: "E", relative: "C#m", source: "Mi", files: { ambient: "Mi.wav", foundation: "E.mp3", organic: "E.mp3", studio: "E.mp3" }, frequency: 329.63 },
-  { label: "F", relative: "Dm", source: "F\u00e1", files: { ambient: "F\u00e1.wav", foundation: "F.mp3", organic: "F.mp3", studio: "F.mp3" }, frequency: 349.23 },
-  { label: "F#", relative: "D#m", source: "F\u00e1#", files: { ambient: "F\u00e1#.wav", foundation: "Gb.mp3", organic: "Gb.mp3", studio: "Fs.mp3" }, frequency: 369.99 },
-  { label: "G", relative: "Em", source: "Sol", files: { ambient: "Sol.wav", foundation: "G.mp3", organic: "G.mp3", studio: "G.mp3" }, frequency: 392.0 },
-  { label: "G#", relative: "Fm", source: "Sol#", files: { ambient: "Sol#.wav", foundation: "Ab.mp3", organic: "Ab.mp3", studio: "Gs.mp3" }, frequency: 415.3 },
-  { label: "A", relative: "F#m", source: "L\u00e1", files: { ambient: "L\u00e1.wav", foundation: "A.mp3", organic: "A.mp3", studio: "A.mp3" }, frequency: 440.0 },
-  { label: "A#", relative: "Gm", source: "L\u00e1#", files: { ambient: "L\u00e1#.wav", foundation: "Bb.mp3", organic: "Bb.mp3", studio: "As.mp3" }, frequency: 466.16 },
-  { label: "B", relative: "G#m", source: "Si", files: { ambient: "Si.wav", foundation: "B.mp3", organic: "B.mp3", studio: "B.mp3" }, frequency: 493.88 },
+  { label: "C", relative: "Am", source: "D\u00f3", files: { ambient: "D\u00f3.wav", foundation: "C.mp3", organic: "C.mp3", studio: "C.mp3", warm: "C.mp3" }, frequency: 261.63 },
+  { label: "C#", relative: "A#m", source: "D\u00f3#", files: { ambient: "D\u00f3#.wav", foundation: "C#.mp3", organic: "Db.mp3", studio: "Cs.mp3", warm: "Cs.mp3" }, frequency: 277.18 },
+  { label: "D", relative: "Bm", source: "R\u00e9", files: { ambient: "R\u00e9.wav", foundation: "D.mp3", organic: "D.mp3", studio: "D.mp3", warm: "D.mp3" }, frequency: 293.66 },
+  { label: "D#", relative: "Cm", source: "R\u00e9#", files: { ambient: "R\u00e9#.wav", foundation: "Eb.mp3", organic: "Eb.mp3", studio: "Ds.mp3", warm: "Ds.mp3" }, frequency: 311.13 },
+  { label: "E", relative: "C#m", source: "Mi", files: { ambient: "Mi.wav", foundation: "E.mp3", organic: "E.mp3", studio: "E.mp3", warm: "E.mp3" }, frequency: 329.63 },
+  { label: "F", relative: "Dm", source: "F\u00e1", files: { ambient: "F\u00e1.wav", foundation: "F.mp3", organic: "F.mp3", studio: "F.mp3", warm: "F.mp3" }, frequency: 349.23 },
+  { label: "F#", relative: "D#m", source: "F\u00e1#", files: { ambient: "F\u00e1#.wav", foundation: "Gb.mp3", organic: "Gb.mp3", studio: "Fs.mp3", warm: "Fs.mp3" }, frequency: 369.99 },
+  { label: "G", relative: "Em", source: "Sol", files: { ambient: "Sol.wav", foundation: "G.mp3", organic: "G.mp3", studio: "G.mp3", warm: "G.mp3" }, frequency: 392.0 },
+  { label: "G#", relative: "Fm", source: "Sol#", files: { ambient: "Sol#.wav", foundation: "Ab.mp3", organic: "Ab.mp3", studio: "Gs.mp3", warm: "Gs.mp3" }, frequency: 415.3 },
+  { label: "A", relative: "F#m", source: "L\u00e1", files: { ambient: "L\u00e1.wav", foundation: "A.mp3", organic: "A.mp3", studio: "A.mp3", warm: "A.mp3" }, frequency: 440.0 },
+  { label: "A#", relative: "Gm", source: "L\u00e1#", files: { ambient: "L\u00e1#.wav", foundation: "Bb.mp3", organic: "Bb.mp3", studio: "As.mp3", warm: "As.mp3" }, frequency: 466.16 },
+  { label: "B", relative: "G#m", source: "Si", files: { ambient: "Si.wav", foundation: "B.mp3", organic: "B.mp3", studio: "B.mp3", warm: "B.mp3" }, frequency: 493.88 },
 ];
 
 const padLibraries = [
   { id: "foundation", name: "Foundation", folder: "assets/pads-foundations" },
   { id: "organic", name: "Organic", folder: "assets/pads-organic" },
   { id: "studio", name: "Studio", folder: "assets/pads-studio", loopCrossfadeMs: 8000 },
+  { id: "warm", name: "Warm", folder: "assets/pads-warm", loopCrossfadeMs: 8000 },
 ];
 
 const padsGrid = document.querySelector("#padsGrid");
@@ -89,6 +90,7 @@ const libraryNames = {
   foundation: { "pt-BR": "Base", en: "Foundation" },
   organic: { "pt-BR": "Orgânico", en: "Organic" },
   studio: { "pt-BR": "Estúdio", en: "Studio" },
+  warm: { "pt-BR": "Warm", en: "Warm" },
 };
 
 const AUDIO_FADE_IN_MS = 5200;
