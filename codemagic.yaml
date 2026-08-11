@@ -20,6 +20,7 @@ workflows:
         BUILD_NUMBER: "1"
         IOS_DEPLOYMENT_TARGET: "15.0"
         XCODE_WORKSPACE: ios/App/App.xcworkspace
+        XCODE_PROJECT: ios/App/App.xcodeproj
         XCODE_SCHEME: App
     cache:
       cache_paths:
@@ -33,7 +34,7 @@ workflows:
       - name: Create iOS platform if needed
         script: |
           if [ ! -d "ios" ]; then
-            npx cap add ios
+            npx cap add ios --packagemanager SPM
           else
             echo "iOS platform already exists."
           fi
@@ -45,25 +46,43 @@ workflows:
         script: sh scripts/apply-ios-app-icon.sh
       - name: Install CocoaPods
         script: |
-          PODFILE_DIR="$CM_BUILD_DIR/ios/App"
-          PODFILE_PATH="$PODFILE_DIR/Podfile"
+          echo "Inspecting generated iOS dependency manager files..."
+          find "$CM_BUILD_DIR/ios" -maxdepth 4 \( -name Podfile -o -name Package.swift -o -name "*.xcodeproj" -o -name "*.xcworkspace" \) -print || true
 
-          if [ ! -f "$PODFILE_PATH" ]; then
-            echo "Expected Podfile at $PODFILE_PATH, but it was not found."
-            find "$CM_BUILD_DIR/ios" -name Podfile -print || true
-            exit 1
+          PODFILE_PATH="$(find "$CM_BUILD_DIR/ios" -name Podfile -print -quit || true)"
+
+          if [ -n "$PODFILE_PATH" ]; then
+            PODFILE_DIR="$(dirname "$PODFILE_PATH")"
+            echo "Podfile found at $PODFILE_PATH"
+            echo "Installing CocoaPods from $PODFILE_DIR"
+            cd "$PODFILE_DIR"
+            pod install --repo-update
+          else
+            echo "No Podfile found. Capacitor 8 generated an SPM-based iOS project."
+            if [ -f "$CM_BUILD_DIR/ios/App/CapApp-SPM/Package.swift" ]; then
+              echo "SPM package found at $CM_BUILD_DIR/ios/App/CapApp-SPM/Package.swift"
+            fi
+            echo "Skipping CocoaPods install."
           fi
-
-          echo "Installing CocoaPods from $PODFILE_PATH"
-          cd "$PODFILE_DIR"
-          pod install --repo-update
       - name: Set up code signing settings
         script: xcode-project use-profiles
       - name: Build signed IPA
         script: |
-          xcode-project build-ipa \
-            --workspace "$CM_BUILD_DIR/$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
+          if [ -d "$CM_BUILD_DIR/$XCODE_WORKSPACE" ]; then
+            echo "Building IPA from workspace $CM_BUILD_DIR/$XCODE_WORKSPACE"
+            xcode-project build-ipa \
+              --workspace "$CM_BUILD_DIR/$XCODE_WORKSPACE" \
+              --scheme "$XCODE_SCHEME"
+          elif [ -d "$CM_BUILD_DIR/$XCODE_PROJECT" ]; then
+            echo "Building IPA from project $CM_BUILD_DIR/$XCODE_PROJECT"
+            xcode-project build-ipa \
+              --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+              --scheme "$XCODE_SCHEME"
+          else
+            echo "No Xcode workspace or project found."
+            find "$CM_BUILD_DIR/ios" -maxdepth 4 \( -name "*.xcodeproj" -o -name "*.xcworkspace" \) -print || true
+            exit 1
+          fi
     artifacts:
       - ios/App/build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
