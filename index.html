@@ -59,6 +59,7 @@
           <nav class="mode-tabs" aria-label="Modos do app" data-i18n-aria="appModes">
             <button class="mode-tab is-active" type="button" data-view="live" data-i18n="live">Ao Vivo</button>
             <button class="mode-tab" type="button" data-view="sounds" data-i18n="sounds">Sons</button>
+            <button class="mode-tab" type="button" data-view="tuner" data-i18n="tuner">Afinador</button>
           </nav>
 
           <section class="view-panel live-view" id="liveView" aria-label="Pads ao vivo" data-i18n-aria="livePads">
@@ -105,6 +106,50 @@
             </div>
           </section>
 
+          <section class="view-panel tuner-view is-hidden" id="tunerView" aria-label="Afinador" data-i18n-aria="tuner">
+            <div class="tuner-scroll">
+              <div class="tuner-heading">
+                <div>
+                  <p data-i18n="tunerTool">Ferramenta</p>
+                  <h2 data-i18n="tuner">Afinador</h2>
+                </div>
+                <div class="tuner-status-dot" id="tunerStatusDot" aria-hidden="true"></div>
+              </div>
+
+              <label class="instrument-picker">
+                <span data-i18n="instrument">Instrumento</span>
+                <select id="instrumentSelect"></select>
+              </label>
+
+              <div class="tuner-stage" id="tunerStage">
+                <p class="tuner-prompt" id="tunerPrompt" data-i18n="playString">Toque uma corda</p>
+                <strong class="tuner-note" id="tunerNote">--</strong>
+                <span class="tuner-note-detail" id="tunerNoteDetail">--</span>
+                <span class="tuner-frequency" id="tunerFrequency">-- Hz</span>
+              </div>
+
+              <div class="tuner-meter" aria-label="Medidor de cents" data-i18n-aria="centsMeter">
+                <div class="tuner-scale">
+                  <span>-50</span>
+                  <span>0</span>
+                  <span>+50</span>
+                </div>
+                <div class="tuner-track">
+                  <span class="tuner-zone"></span>
+                  <i class="tuner-center"></i>
+                  <b class="tuner-needle" id="tunerNeedle"></b>
+                </div>
+                <strong class="tuner-cents" id="tunerCents">0 cents</strong>
+              </div>
+
+              <div class="tuner-strings" id="tunerStrings" aria-label="Cordas do instrumento" data-i18n-aria="instrumentStrings"></div>
+
+              <p class="tuner-privacy" data-i18n="tunerPrivacy">
+                O audio do microfone e processado localmente e nunca e gravado ou enviado.
+              </p>
+            </div>
+          </section>
+
           <footer class="bottom-bar" aria-label="Controles inferiores">
             <span class="footer-signature">ColliDev</span>
           </footer>
@@ -112,6 +157,8 @@
       </section>
     </main>
 
-    <script src="app.js?v=glorypad-20"></script>
+    <script src="tuner-core.js?v=glorypad-1"></script>
+    <script src="tuner-audio.js?v=glorypad-1"></script>
+    <script src="app.js?v=glorypad-21"></script>
   </body>
 </html>

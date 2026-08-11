@@ -34,11 +34,22 @@ const settingsButton = document.querySelector("#settingsButton");
 const backToLiveButton = document.querySelector("#backToLiveButton");
 const liveView = document.querySelector("#liveView");
 const soundsView = document.querySelector("#soundsView");
+const tunerView = document.querySelector("#tunerView");
 const toneSelect = document.querySelector("#toneSelect");
 const languageSelect = document.querySelector("#languageSelect");
 const libraryList = document.querySelector("#libraryList");
 const miniLibraryName = document.querySelector("#miniLibraryName");
 const modeTabs = document.querySelectorAll("[data-view]");
+const instrumentSelect = document.querySelector("#instrumentSelect");
+const tunerStatusDot = document.querySelector("#tunerStatusDot");
+const tunerStage = document.querySelector("#tunerStage");
+const tunerPrompt = document.querySelector("#tunerPrompt");
+const tunerNote = document.querySelector("#tunerNote");
+const tunerNoteDetail = document.querySelector("#tunerNoteDetail");
+const tunerFrequency = document.querySelector("#tunerFrequency");
+const tunerNeedle = document.querySelector("#tunerNeedle");
+const tunerCents = document.querySelector("#tunerCents");
+const tunerStrings = document.querySelector("#tunerStrings");
 
 let activePad = null;
 let activeAudio = null;
@@ -48,6 +59,11 @@ let currentLibrary = padLibraries[0];
 let splashTimer = null;
 const managedAudios = new Set();
 let currentLanguage = localStorage.getItem("gloryPadLanguage") || "pt-BR";
+let currentView = "live";
+let tunerController = null;
+let tunerState = null;
+let tunerFrame = null;
+let currentInstrument = window.GloryPadTunerCore?.instruments?.[0] || null;
 
 const translations = {
   "pt-BR": {
@@ -62,9 +78,21 @@ const translations = {
     live: "Ao Vivo",
     livePads: "Pads ao vivo",
     none: "Nenhum",
+    centsMeter: "Medidor de cents",
+    comingSoon: "Em breve",
+    flatHint: "\u2191 Aperte a corda",
+    inTuneHint: "Afinado",
+    instrument: "Instrumento",
+    instrumentStrings: "Cordas do instrumento",
+    playString: "Toque uma corda",
+    sharpHint: "\u2193 Afrouxe a corda",
     soundList: "Lista de sons",
     sounds: "Sons",
     twelveKeys: "Pads das 12 tonalidades",
+    tuner: "Afinador",
+    tunerMicError: "Permita o microfone para usar o afinador",
+    tunerPrivacy: "O audio do microfone e processado localmente e nunca e gravado ou enviado.",
+    tunerTool: "Ferramenta",
     volume: "Volume",
   },
   en: {
@@ -79,9 +107,21 @@ const translations = {
     live: "Live",
     livePads: "Live pads",
     none: "None",
+    centsMeter: "Cents meter",
+    comingSoon: "Coming soon",
+    flatHint: "\u2191 Tighten the string",
+    inTuneHint: "In tune",
+    instrument: "Instrument",
+    instrumentStrings: "Instrument strings",
+    playString: "Play a string",
+    sharpHint: "\u2193 Loosen the string",
     soundList: "Sound list",
     sounds: "Sounds",
     twelveKeys: "Pads for the 12 keys",
+    tuner: "Tuner",
+    tunerMicError: "Allow microphone access to use the tuner",
+    tunerPrivacy: "Microphone audio is processed locally and is never recorded or sent.",
+    tunerTool: "Tool",
     volume: "Volume",
   },
 };
@@ -228,6 +268,7 @@ function lockDarkTheme() {
 
 function showHome() {
   stopCurrentPad();
+  stopTuner();
   homeScreen.classList.remove("is-hidden");
   padsScreen.classList.add("is-hidden");
   window.clearTimeout(splashTimer);
@@ -243,11 +284,139 @@ function showPads(view = "live") {
 
 function setView(view) {
   const isLive = view === "live";
+  const isSounds = view === "sounds";
+  const isTuner = view === "tuner";
+  currentView = view;
+
+  if (isTuner) {
+    stopCurrentPad();
+    startTuner();
+  } else {
+    stopTuner();
+  }
+
   liveView.classList.toggle("is-hidden", !isLive);
-  soundsView.classList.toggle("is-hidden", isLive);
+  soundsView.classList.toggle("is-hidden", !isSounds);
+  tunerView.classList.toggle("is-hidden", !isTuner);
 
   modeTabs.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.view === view);
+  });
+}
+
+function renderInstrumentOptions() {
+  if (!instrumentSelect || !window.GloryPadTunerCore) return;
+
+  instrumentSelect.innerHTML = window.GloryPadTunerCore.instruments
+    .map((instrument) => {
+      const suffix = instrument.available ? " \u2713" : ` - ${t("comingSoon")}`;
+      return `<option value="${instrument.id}" ${instrument.available ? "" : "disabled"}>${instrument.name}${suffix}</option>`;
+    })
+    .join("");
+
+  instrumentSelect.value = currentInstrument?.id || "guitar-standard";
+}
+
+function renderTunerStrings() {
+  if (!tunerStrings || !currentInstrument) return;
+
+  tunerStrings.innerHTML = currentInstrument.strings
+    .map(
+      (stringNote) => `
+        <div class="tuner-string" data-string-number="${stringNote.stringNumber}">
+          <strong>${stringNote.note}</strong>
+          <span>${stringNote.stringNumber} / ${stringNote.note}${stringNote.octave}</span>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function getTunerController() {
+  if (!tunerController && window.GloryPadTunerAudio && currentInstrument) {
+    tunerController = new window.GloryPadTunerAudio.TunerController({
+      engine: new window.GloryPadTunerAudio.TunerEngine(currentInstrument),
+      onState: (state) => {
+        tunerState = state;
+      },
+    });
+  }
+
+  return tunerController;
+}
+
+async function startTuner() {
+  if (!window.GloryPadTunerAudio || !window.GloryPadTunerCore) return;
+
+  tunerStatusDot?.classList.add("is-listening");
+  tunerState = tunerState || getTunerController()?.engine.getState();
+  startTunerRenderLoop();
+
+  try {
+    await getTunerController().start();
+  } catch (error) {
+    tunerStatusDot?.classList.remove("is-listening");
+    tunerState = {
+      reliable: false,
+      status: "NO_SIGNAL",
+      message: t("tunerMicError"),
+      note: "--",
+      noteLabel: "",
+      displayCents: 0,
+      cents: 0,
+      frequencyHz: null,
+      stringNumber: null,
+    };
+    updateTunerUi(tunerState);
+  }
+}
+
+async function stopTuner() {
+  if (tunerFrame) {
+    window.cancelAnimationFrame(tunerFrame);
+    tunerFrame = null;
+  }
+
+  tunerStatusDot?.classList.remove("is-listening");
+
+  if (tunerController) {
+    await tunerController.stop();
+  }
+}
+
+function startTunerRenderLoop() {
+  if (tunerFrame) return;
+
+  const render = () => {
+    updateTunerUi(tunerState || getTunerController()?.engine.getState());
+    tunerFrame = window.requestAnimationFrame(render);
+  };
+
+  tunerFrame = window.requestAnimationFrame(render);
+}
+
+function updateTunerUi(state) {
+  if (!state || !tunerStage) return;
+
+  const isReliable = Boolean(state.reliable);
+  const status = state.status || "NO_SIGNAL";
+  const hint = status === "IN_TUNE" ? t("inTuneHint") : status === "FLAT" ? t("flatHint") : status === "SHARP" ? t("sharpHint") : state.message || t("playString");
+  const cents = Number.isFinite(state.cents) ? Math.round(state.cents) : 0;
+  const displayCents = Number.isFinite(state.displayCents) ? state.displayCents : 0;
+
+  tunerStage.classList.toggle("is-flat", status === "FLAT");
+  tunerStage.classList.toggle("is-sharp", status === "SHARP");
+  tunerStage.classList.toggle("is-in-tune", status === "IN_TUNE");
+  tunerStatusDot?.classList.toggle("is-locked", status === "IN_TUNE");
+  tunerPrompt.textContent = hint;
+  tunerNote.textContent = isReliable ? state.note : "--";
+  tunerNoteDetail.textContent = isReliable ? state.noteLabel : t("playString");
+  tunerFrequency.textContent = isReliable && Number.isFinite(state.frequencyHz) ? `${state.frequencyHz.toFixed(1)} Hz` : "-- Hz";
+  tunerCents.textContent = isReliable ? `${cents > 0 ? "+" : ""}${cents} cents` : "0 cents";
+  tunerNeedle.style.transform = `translateX(calc(-50% + ${displayCents}%))`;
+
+  document.querySelectorAll(".tuner-string").forEach((element) => {
+    element.classList.toggle("is-active", isReliable && Number(element.dataset.stringNumber) === state.stringNumber);
   });
 }
 
@@ -447,12 +616,16 @@ function applyLanguage(language) {
   });
 
   renderLibraries();
+  renderInstrumentOptions();
   setActivePad(activePad);
+  updateTunerUi(tunerState || getTunerController()?.engine.getState());
 }
 
 renderPads();
 renderToneOptions();
 renderLibraries();
+renderInstrumentOptions();
+renderTunerStrings();
 lockDarkTheme();
 applyLanguage(currentLanguage);
 splashTimer = window.setTimeout(() => showPads("live"), SPLASH_DURATION_MS);
@@ -480,6 +653,26 @@ settingsButton?.addEventListener("click", () => showPads("sounds"));
 backToLiveButton.addEventListener("click", () => setView("live"));
 volumeSlider.addEventListener("input", updateVolume);
 languageSelect.addEventListener("change", () => applyLanguage(languageSelect.value));
+instrumentSelect?.addEventListener("change", () => {
+  const nextInstrument = window.GloryPadTunerCore?.instruments.find((instrument) => instrument.id === instrumentSelect.value);
+  if (!nextInstrument?.available) {
+    instrumentSelect.value = currentInstrument?.id || "guitar-standard";
+    return;
+  }
+
+  currentInstrument = nextInstrument;
+  getTunerController()?.setInstrument(currentInstrument);
+  renderTunerStrings();
+  updateTunerUi(getTunerController()?.engine.getState());
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    stopTuner();
+  } else if (currentView === "tuner") {
+    startTuner();
+  }
+});
 
 toneSelect.addEventListener("change", () => {
   playPad(pads[Number(toneSelect.value)]);

@@ -5,6 +5,8 @@
   "description": "GloryPad iOS/App Store preparation with Capacitor.",
   "scripts": {
     "build": "node scripts/build-www.js",
+    "lint": "node --check app.js && node --check tuner-core.js && node --check tuner-audio.js && node --check scripts/build-www.js && node --check tests/tuner-core.test.js",
+    "test": "node tests/tuner-core.test.js",
     "cap:sync": "npm run build && npx cap sync ios",
     "cap:open:ios": "npx cap open ios"
   },

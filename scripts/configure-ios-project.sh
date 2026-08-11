@@ -39,6 +39,7 @@ set_plist_value "CFBundleName" "string" "$APP_NAME"
 set_plist_value "CFBundleShortVersionString" "string" "$MARKETING_VERSION"
 set_plist_value "CFBundleVersion" "string" "$BUILD_NUMBER"
 set_plist_value "ITSAppUsesNonExemptEncryption" "bool" "false"
+set_plist_value "NSMicrophoneUsageDescription" "string" "O GloryPad utiliza o microfone para detectar a afinacao do seu instrumento."
 
 if [ -f "$PBXPROJ" ]; then
   export BUNDLE_ID MARKETING_VERSION BUILD_NUMBER DEPLOYMENT_TARGET

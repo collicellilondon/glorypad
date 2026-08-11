@@ -6,7 +6,7 @@ const nestedWebDist = path.join(root, "web-dist");
 const sourceDir = fs.existsSync(path.join(nestedWebDist, "index.html")) ? nestedWebDist : root;
 const outDir = path.join(root, "www");
 
-const files = ["index.html", "styles.css", "app.js", "site.webmanifest"];
+const files = ["index.html", "styles.css", "app.js", "tuner-core.js", "tuner-audio.js", "site.webmanifest", "politicadeprivacidade.html"];
 const assetDirs = [
   "assets/icons",
   "assets/pads-foundations",
