@@ -18,6 +18,8 @@
   --active-fluor-faint: rgba(225, 228, 232, 0.07);
   --tuner-flat: #9fb8ff;
   --tuner-sharp: #f7b7ff;
+  --tuner-alert: #ff4e5f;
+  --tuner-alert-soft: rgba(255, 78, 95, 0.2);
   --tuner-lock: #72ffcf;
   --tuner-lock-soft: rgba(114, 255, 207, 0.22);
   --tuner-lock-faint: rgba(114, 255, 207, 0.075);
@@ -59,6 +61,18 @@ select {
 button,
 select {
   color: inherit;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 button {
@@ -625,19 +639,167 @@ button {
 
 .instrument-picker {
   display: grid;
-  gap: 8px;
+  gap: 14px;
 }
 
-.instrument-picker span {
+.instrument-picker-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.instrument-picker-head span {
   color: var(--muted);
-  font-size: 0.66rem;
+  font-size: clamp(0.82rem, 2.8vw, 1.02rem);
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-.instrument-picker option:disabled {
-  color: rgba(218, 220, 224, 0.32);
+.instrument-picker-head small {
+  color: rgba(218, 220, 224, 0.44);
+  font-size: clamp(0.78rem, 2.6vw, 0.95rem);
+  font-weight: 700;
+}
+
+.instrument-card-list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(184px, 1fr);
+  gap: 12px;
+  overflow-x: auto;
+  padding: 2px 2px 8px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.instrument-card-list::-webkit-scrollbar {
+  display: none;
+}
+
+.instrument-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 66px 1fr;
+  align-items: center;
+  gap: 14px;
+  min-height: 96px;
+  padding: 14px;
+  border: 1px solid rgba(210, 210, 210, 0.1);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(172, 117, 62, 0.18), transparent 7rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.016)),
+    rgba(23, 25, 29, 0.88);
+  color: rgba(236, 238, 241, 0.78);
+  text-align: left;
+  scroll-snap-align: start;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+}
+
+.instrument-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  opacity: 0;
+  transform: translateX(-120%);
+}
+
+.instrument-card.is-selected::before {
+  animation: instrumentSweep 3.8s ease-in-out infinite;
+}
+
+.instrument-card.is-selected {
+  border-color: color-mix(in srgb, var(--active-tuner-state, var(--tuner-alert)) 48%, transparent);
+  background:
+    radial-gradient(circle at 16% 18%, rgba(172, 117, 62, 0.22), transparent 7rem),
+    radial-gradient(circle at 82% 50%, color-mix(in srgb, var(--active-tuner-state, var(--tuner-alert)) 15%, transparent), transparent 8rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02)),
+    rgba(30, 32, 38, 0.94);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--active-tuner-state, var(--tuner-alert)) 13%, transparent);
+}
+
+.instrument-card:disabled {
+  opacity: 0.48;
+  cursor: default;
+}
+
+.instrument-card-copy {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.instrument-card-copy strong {
+  overflow: hidden;
+  color: rgba(248, 249, 250, 0.94);
+  font-size: clamp(1.06rem, 4vw, 1.36rem);
+  font-weight: 720;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+}
+
+.instrument-card-copy small {
+  color: rgba(218, 220, 224, 0.58);
+  font-size: 0.74rem;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.instrument-wood-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 68px;
+}
+
+.instrument-wood-icon i,
+.instrument-wood-icon b,
+.instrument-wood-icon em {
+  display: block;
+  background:
+    linear-gradient(90deg, rgba(255, 240, 188, 0.18), transparent 18%, rgba(64, 31, 12, 0.2) 44%, transparent 68%),
+    linear-gradient(145deg, #9d5d2c, #d4934d 45%, #6f351b);
+  box-shadow: inset 0 0 0 1px rgba(255, 235, 190, 0.16), 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.instrument-wood-icon i {
+  width: 36px;
+  height: 46px;
+  border-radius: 48% 48% 44% 44%;
+  transform: rotate(-7deg);
+}
+
+.instrument-wood-icon b {
+  position: absolute;
+  top: 2px;
+  width: 12px;
+  height: 48px;
+  border-radius: 999px;
+}
+
+.instrument-wood-icon em {
+  position: absolute;
+  top: 0;
+  width: 30px;
+  height: 13px;
+  border-radius: 4px;
+}
+
+.instrument-wood-icon::after {
+  content: "";
+  position: absolute;
+  bottom: 13px;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(22, 13, 8, 0.58);
+  border-radius: 999px;
+  background: rgba(15, 10, 7, 0.5);
 }
 
 .tuner-stage {
@@ -672,11 +834,11 @@ button {
 }
 
 .tuner-stage.is-flat {
-  --tuner-state: var(--tuner-flat);
+  --tuner-state: var(--tuner-alert);
 }
 
 .tuner-stage.is-sharp {
-  --tuner-state: var(--tuner-sharp);
+  --tuner-state: var(--tuner-alert);
 }
 
 .tuner-stage.is-in-tune {
@@ -865,14 +1027,23 @@ button {
 }
 
 .tuner-string.is-active {
-  border-color: color-mix(in srgb, var(--tuner-state, #f5f6f8) 34%, transparent);
+  border-color: color-mix(in srgb, var(--string-state, var(--tuner-alert)) 42%, transparent);
   background:
-    radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--tuner-state, #f5f6f8) 12%, transparent), transparent 4rem),
+    radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--string-state, var(--tuner-alert)) 14%, transparent), transparent 4rem),
     rgba(30, 32, 38, 0.94);
   color: rgba(248, 249, 250, 0.96);
   box-shadow:
-    inset 0 0 24px color-mix(in srgb, var(--tuner-state, #f5f6f8) 7%, transparent),
-    0 0 20px color-mix(in srgb, var(--tuner-state, #f5f6f8) 9%, transparent);
+    inset 0 0 24px color-mix(in srgb, var(--string-state, var(--tuner-alert)) 8%, transparent),
+    0 0 20px color-mix(in srgb, var(--string-state, var(--tuner-alert)) 13%, transparent);
+}
+
+.tuner-string.is-out-tune {
+  --string-state: var(--tuner-alert);
+}
+
+.tuner-string.is-in-tune {
+  --string-state: var(--tuner-lock);
+  animation: tunedStringPop 860ms ease-in-out infinite alternate;
 }
 
 .tuner-privacy {
@@ -897,6 +1068,33 @@ button {
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@keyframes tunedStringPop {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes instrumentSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+
+  22% {
+    opacity: 0.55;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
   }
 }
 

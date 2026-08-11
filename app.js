@@ -41,6 +41,7 @@ const libraryList = document.querySelector("#libraryList");
 const miniLibraryName = document.querySelector("#miniLibraryName");
 const modeTabs = document.querySelectorAll("[data-view]");
 const instrumentSelect = document.querySelector("#instrumentSelect");
+const instrumentCards = document.querySelector("#instrumentCards");
 const tunerStatusDot = document.querySelector("#tunerStatusDot");
 const tunerStage = document.querySelector("#tunerStage");
 const tunerPrompt = document.querySelector("#tunerPrompt");
@@ -85,6 +86,7 @@ const translations = {
     instrument: "Instrumento",
     instrumentStrings: "Cordas do instrumento",
     playString: "Toque uma corda",
+    selectInstrument: "Selecione o instrumento",
     sharpHint: "\u2193 Afrouxe a corda",
     soundList: "Lista de sons",
     sounds: "Sons",
@@ -114,6 +116,7 @@ const translations = {
     instrument: "Instrument",
     instrumentStrings: "Instrument strings",
     playString: "Play a string",
+    selectInstrument: "Select instrument",
     sharpHint: "\u2193 Loosen the string",
     soundList: "Sound list",
     sounds: "Sounds",
@@ -315,6 +318,36 @@ function renderInstrumentOptions() {
     .join("");
 
   instrumentSelect.value = currentInstrument?.id || "guitar-standard";
+  renderInstrumentCards();
+}
+
+function renderInstrumentCards() {
+  if (!instrumentCards || !window.GloryPadTunerCore) return;
+
+  instrumentCards.innerHTML = window.GloryPadTunerCore.instruments
+    .map((instrument) => {
+      const isSelected = currentInstrument?.id === instrument.id;
+      return `
+        <button
+          class="instrument-card ${isSelected ? "is-selected" : ""}"
+          type="button"
+          data-instrument-id="${instrument.id}"
+          ${instrument.available ? "" : "disabled"}
+          aria-pressed="${String(isSelected)}"
+        >
+          <span class="instrument-wood-icon" aria-hidden="true">
+            <i></i>
+            <b></b>
+            <em></em>
+          </span>
+          <span class="instrument-card-copy">
+            <strong>${instrument.name}</strong>
+            <small>${instrument.available ? "Standard" : t("comingSoon")}</small>
+          </span>
+        </button>
+      `;
+    })
+    .join("");
 }
 
 function renderTunerStrings() {
@@ -416,8 +449,13 @@ function updateTunerUi(state) {
   tunerNeedle.style.transform = `translateX(calc(-50% + ${displayCents}%))`;
 
   document.querySelectorAll(".tuner-string").forEach((element) => {
-    element.classList.toggle("is-active", isReliable && Number(element.dataset.stringNumber) === state.stringNumber);
+    const isActiveString = isReliable && Number(element.dataset.stringNumber) === state.stringNumber;
+    element.classList.toggle("is-active", isActiveString);
+    element.classList.toggle("is-in-tune", isActiveString && status === "IN_TUNE");
+    element.classList.toggle("is-out-tune", isActiveString && status !== "IN_TUNE");
   });
+
+  instrumentCards?.style.setProperty("--active-tuner-state", status === "IN_TUNE" ? "var(--tuner-lock)" : "var(--tuner-alert)");
 }
 
 function renderToneOptions() {
@@ -662,8 +700,16 @@ instrumentSelect?.addEventListener("change", () => {
 
   currentInstrument = nextInstrument;
   getTunerController()?.setInstrument(currentInstrument);
+  renderInstrumentCards();
   renderTunerStrings();
   updateTunerUi(getTunerController()?.engine.getState());
+});
+
+instrumentCards?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-instrument-id]");
+  if (!button || button.disabled) return;
+  instrumentSelect.value = button.dataset.instrumentId;
+  instrumentSelect.dispatchEvent(new Event("change"));
 });
 
 document.addEventListener("visibilitychange", () => {

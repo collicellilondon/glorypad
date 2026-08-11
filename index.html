@@ -116,10 +116,14 @@
                 <div class="tuner-status-dot" id="tunerStatusDot" aria-hidden="true"></div>
               </div>
 
-              <label class="instrument-picker">
-                <span data-i18n="instrument">Instrumento</span>
-                <select id="instrumentSelect"></select>
-              </label>
+              <section class="instrument-picker" aria-label="Instrumento" data-i18n-aria="instrument">
+                <div class="instrument-picker-head">
+                  <span data-i18n="instrument">Instrumento</span>
+                  <small data-i18n="selectInstrument">Selecione o instrumento</small>
+                </div>
+                <select class="sr-only" id="instrumentSelect" aria-label="Instrumento" data-i18n-aria="instrument"></select>
+                <div class="instrument-card-list" id="instrumentCards"></div>
+              </section>
 
               <div class="tuner-stage" id="tunerStage">
                 <p class="tuner-prompt" id="tunerPrompt" data-i18n="playString">Toque uma corda</p>

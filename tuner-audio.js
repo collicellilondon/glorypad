@@ -2,15 +2,16 @@
   const core = globalScope.GloryPadTunerCore;
 
   const DETECTION_CONFIG = {
-    fftSize: 8192,
+    fftSize: 16384,
     minFrequency: 65,
     maxFrequency: 370,
-    rmsThreshold: 0.012,
-    confidenceThreshold: 0.72,
-    yinThreshold: 0.14,
-    smoothingAlpha: 0.34,
-    staleFrameLimit: 10,
-    analysisIntervalMs: 28,
+    rmsThreshold: 0.0055,
+    confidenceThreshold: 0.56,
+    yinThreshold: 0.2,
+    inputGain: 2.35,
+    smoothingAlpha: 0.3,
+    staleFrameLimit: 16,
+    analysisIntervalMs: 24,
   };
 
   class AudioInputService {
@@ -19,6 +20,7 @@
       this.analyser = null;
       this.stream = null;
       this.source = null;
+      this.gain = null;
     }
 
     async start() {
@@ -46,8 +48,11 @@
       this.analyser = this.audioContext.createAnalyser();
       this.analyser.fftSize = DETECTION_CONFIG.fftSize;
       this.analyser.smoothingTimeConstant = 0;
+      this.gain = this.audioContext.createGain();
+      this.gain.gain.value = DETECTION_CONFIG.inputGain;
       this.source = this.audioContext.createMediaStreamSource(this.stream);
-      this.source.connect(this.analyser);
+      this.source.connect(this.gain);
+      this.gain.connect(this.analyser);
 
       if (this.audioContext.state === "suspended") {
         await this.audioContext.resume();
@@ -67,6 +72,11 @@
       if (this.source) {
         this.source.disconnect();
         this.source = null;
+      }
+
+      if (this.gain) {
+        this.gain.disconnect();
+        this.gain = null;
       }
 
       if (this.stream) {
