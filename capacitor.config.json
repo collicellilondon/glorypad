@@ -1,0 +1,9 @@
+{
+  "appId": "com.sergiocollicelli.glorypad",
+  "appName": "GloryPad",
+  "webDir": "www",
+  "ios": {
+    "scheme": "GloryPad",
+    "contentInset": "automatic"
+  }
+}

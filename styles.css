@@ -19,20 +19,30 @@
   --shadow: 0 28px 90px rgba(0, 0, 0, 0.45);
 }
 
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
+  overscroll-behavior: none;
   background:
     radial-gradient(circle at 50% -18%, rgba(220, 220, 220, 0.1), transparent 34rem),
     radial-gradient(circle at 10% 92%, rgba(190, 190, 190, 0.07), transparent 26rem),
     linear-gradient(145deg, var(--bg-deep), var(--bg));
   color: var(--text);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-text-size-adjust: 100%;
+  user-select: none;
 }
 
 button,
@@ -49,6 +59,7 @@ select {
 button {
   border: 0;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .is-hidden {
@@ -59,6 +70,7 @@ button {
   position: relative;
   overflow: hidden;
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   padding: 24px;
 }
@@ -258,12 +270,14 @@ button {
 
 .app-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg);
 }
 
 .phone-shell {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   max-width: 860px;
@@ -276,7 +290,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 24px 26px 20px;
+  padding: max(24px, env(safe-area-inset-top)) 26px 20px;
   border-bottom: 1px solid var(--panel-line);
   background:
     linear-gradient(90deg, color-mix(in srgb, var(--panel) 82%, transparent), transparent),
@@ -653,6 +667,7 @@ select {
   border-radius: 8px;
   background: var(--panel);
   padding: 0 14px;
+  font-size: 1rem;
   font-weight: 800;
 }
 

@@ -155,6 +155,7 @@ function scheduleSeamlessLoop(audio, library) {
     if (!managedAudios.has(audio) || audio.gloryIsFadingOut) return;
 
     const nextAudio = new Audio(audio.currentSrc || audio.src);
+    nextAudio.preload = "auto";
     configureAudioLoop(nextAudio, library);
     nextAudio.volume = 0;
     nextAudio.gloryFadeTarget = masterGainValue();
@@ -329,7 +330,8 @@ function stopCurrentPad() {
 
 function ensureAudioContext() {
   if (!audioContext) {
-    audioContext = new AudioContext();
+    const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+    audioContext = new AudioContextConstructor();
   }
 
   if (audioContext.state === "suspended") {
@@ -403,6 +405,7 @@ function playPad(pad) {
   }
 
   const audio = new Audio(`${currentLibrary.folder}/${encodeURIComponent(file)}`);
+  audio.preload = "auto";
   configureAudioLoop(audio, currentLibrary);
   audio.volume = 0;
   activeAudio = audio;
