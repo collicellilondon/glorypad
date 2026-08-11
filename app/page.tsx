@@ -5,6 +5,7 @@ import { MotionObserver } from "./components/motion-observer";
 
 const features = [
   "Pads em todas as tonalidades",
+  "Afinador embutido",
   "Reprodução contínua",
   "Coleções de sons",
   "Controle de volume",
@@ -44,7 +45,7 @@ export default function Home() {
         <div className="hero-copy hero-enter">
           <p className="eyebrow">Sound That Lifts</p>
           <h1 id="hero-title">Atmosfera para cada momento de adoração.</h1>
-          <p className="hero-text">Pads ambientes contínuos para músicos, ministros de louvor e momentos de oração. Escolha a tonalidade, ajuste o som e mantenha a atmosfera sem interrupções.</p>
+          <p className="hero-text">Pads ambientes contínuos para músicos, ministros de louvor e momentos de oração. Escolha a tonalidade, afine seu instrumento, ajuste o som e mantenha a atmosfera sem interrupções.</p>
           <span className="coming-soon" aria-label="GloryPad estará disponível em breve na App Store">
             <span aria-hidden="true">●</span> Disponível em breve na App Store
           </span>
@@ -59,7 +60,7 @@ export default function Home() {
         <p className="section-label">O aplicativo</p>
         <div className="section-grid">
           <h2 id="about-title">Simples para tocar.<br />Feito para adorar.</h2>
-          <p>O GloryPad foi criado para oferecer uma base sonora contínua e envolvente durante ministrações, ensaios, cultos e momentos pessoais de adoração. Uma interface direta, sem distrações, desenvolvida para uso ao vivo.</p>
+          <p>O GloryPad foi criado para oferecer uma base sonora contínua e envolvente durante ministrações, ensaios, cultos e momentos pessoais de adoração. Com afinador embutido e uma interface direta, sem distrações, foi desenvolvido para uso ao vivo.</p>
         </div>
       </section>
 
@@ -82,7 +83,7 @@ export default function Home() {
         <div className="shell section-heading">
           <p className="section-label">Por dentro do GloryPad</p>
           <h2 id="showcase-title">Tudo ao alcance de um toque.</h2>
-          <p>Interface clara, contraste preciso e controles preparados para o palco.</p>
+          <p>Interface clara, contraste preciso, afinador embutido e controles preparados para o palco.</p>
         </div>
         <div className="screens shell">
           {screenshots.map((shot, index) => (

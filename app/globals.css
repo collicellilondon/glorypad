@@ -51,7 +51,7 @@ h1,h2,h3,p { margin-top:0; }
 .section-heading { max-width:730px; margin-bottom:58px; }
 .section-heading h2 { margin-bottom:20px; }
 .section-heading > p:last-child { color:var(--muted); font-size:17px; }
-.feature-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
+.feature-grid { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
 .feature { min-height:185px; padding:24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--surface); }
 .feature { transition:background .3s ease,transform .3s ease,border-color .3s ease; }
 .feature:hover { background:#17181b; transform:translateY(-4px); border-color:#3a3b40; }
