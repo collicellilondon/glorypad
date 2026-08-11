@@ -45,8 +45,18 @@ workflows:
         script: sh scripts/apply-ios-app-icon.sh
       - name: Install CocoaPods
         script: |
-          cd ios/App
-          pod install
+          PODFILE_DIR="$CM_BUILD_DIR/ios/App"
+          PODFILE_PATH="$PODFILE_DIR/Podfile"
+
+          if [ ! -f "$PODFILE_PATH" ]; then
+            echo "Expected Podfile at $PODFILE_PATH, but it was not found."
+            find "$CM_BUILD_DIR/ios" -name Podfile -print || true
+            exit 1
+          fi
+
+          echo "Installing CocoaPods from $PODFILE_PATH"
+          cd "$PODFILE_DIR"
+          pod install --repo-update
       - name: Set up code signing settings
         script: xcode-project use-profiles
       - name: Build signed IPA
