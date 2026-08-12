@@ -35,6 +35,7 @@ export default function Home() {
         <Link href="/" aria-label="GloryPad — início"><BrandMark compact /></Link>
         <nav aria-label="Navegação principal">
           <a href="#app">O app</a>
+          <a href="#afinador">Afinador</a>
           <a href="#recursos">Recursos</a>
           <a href="#sons">Sons</a>
           <a href="#support">Suporte</a>
@@ -61,6 +62,28 @@ export default function Home() {
         <div className="section-grid">
           <h2 id="about-title">Simples para tocar.<br />Feito para adorar.</h2>
           <p>O GloryPad foi criado para oferecer uma base sonora contínua e envolvente durante ministrações, ensaios, cultos e momentos pessoais de adoração. Com afinador embutido e uma interface direta, sem distrações, foi desenvolvido para uso ao vivo.</p>
+        </div>
+      </section>
+
+      <section className="section tuner shell" id="afinador" aria-labelledby="tuner-title" data-reveal>
+        <div className="tuner-copy">
+          <p className="section-label">Novo no GloryPad</p>
+          <h2 id="tuner-title">Afine. Toque.<br />Permaneça no momento.</h2>
+          <p>O afinador agora faz parte do GloryPad. Prepare seu instrumento com rapidez e precisão sem sair do aplicativo — menos interrupções antes do ensaio, do culto ou da ministração.</p>
+          <ul className="tuner-benefits" aria-label="Benefícios do afinador GloryPad">
+            <li><span>01</span>Afinação integrada ao seu fluxo</li>
+            <li><span>02</span>Leitura clara e objetiva</li>
+            <li><span>03</span>Pronto para músicos no palco</li>
+          </ul>
+        </div>
+        <div className="tuner-visual" aria-label="Representação visual do afinador embutido">
+          <span className="tuner-kicker">Afinador embutido</span>
+          <div className="tuner-scale" aria-hidden="true">
+            {Array.from({ length: 15 }, (_, index) => <i key={index} />)}
+          </div>
+          <strong>A</strong>
+          <p>440.0 <span>Hz</span></p>
+          <div className="tuner-status"><span aria-hidden="true" /> Afinado</div>
         </div>
       </section>
 
