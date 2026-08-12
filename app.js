@@ -153,9 +153,20 @@ const AUDIO_FADE_IN_MS = 5200;
 const AUDIO_FADE_OUT_MS = 9200;
 const STOP_FADE_MS = 1400;
 const AUDIO_FADE_FRAME_MS = 30;
-const masterGainValue = () => Number(volumeSlider.value) / 100;
+const DEFAULT_MASTER_VOLUME = 0.75;
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const readStoredVolume = () => {
+  const storedVolume = Number(localStorage.getItem("gloryPadMasterVolume"));
+  return Number.isFinite(storedVolume) ? clamp(storedVolume, 0, 1) : DEFAULT_MASTER_VOLUME;
+};
+let masterVolume = readStoredVolume();
+const masterGainValue = () => masterVolume;
 const smoothFade = (progress) => progress * progress * progress * (progress * (progress * 6 - 15) + 10);
 const t = (key) => translations[currentLanguage]?.[key] || translations["pt-BR"][key] || key;
+
+if (volumeSlider) {
+  volumeSlider.value = String(Math.round(masterVolume * 100));
+}
 
 function clearAudioFade(audio) {
   if (!audio?.gloryFadeTimer) return;
@@ -214,14 +225,15 @@ function scheduleSeamlessLoop(audio, library) {
     nextAudio.preload = "auto";
     configureAudioLoop(nextAudio, library);
     nextAudio.volume = 0;
-    nextAudio.gloryFadeTarget = masterGainValue();
+    nextAudio.gloryFadeGain = 0;
+    nextAudio.gloryFadeTargetGain = 1;
     managedAudios.add(nextAudio);
     activeAudio = nextAudio;
 
     nextAudio
       .play()
       .then(() => {
-        fadeAudioTo(nextAudio, masterGainValue(), crossfadeMs);
+        fadeAudioTo(nextAudio, 1, crossfadeMs);
         fadeOutAndDispose(audio, crossfadeMs);
       })
       .catch(() => {
@@ -251,22 +263,34 @@ function fadeOutAllManagedAudios(duration = STOP_FADE_MS) {
   });
 }
 
+function syncAudioVolume(audio) {
+  if (!audio) return;
+  const fadeGain = Number.isFinite(audio.gloryFadeGain) ? audio.gloryFadeGain : 1;
+  audio.volume = clamp(fadeGain * masterGainValue(), 0, 1);
+}
+
 function fadeAudioTo(audio, targetVolume, duration = AUDIO_FADE_IN_MS, onComplete) {
   if (!audio) return;
 
   clearAudioFade(audio);
-  const startVolume = audio.volume;
+  const startVolume = clamp(
+    Number.isFinite(audio.gloryFadeGain) ? audio.gloryFadeGain : audio.volume / Math.max(masterGainValue(), 0.001),
+    0,
+    1,
+  );
   const startedAt = performance.now();
-  audio.gloryFadeTarget = targetVolume;
+  audio.gloryFadeTargetGain = clamp(targetVolume, 0, 1);
 
   audio.gloryFadeTimer = window.setInterval(() => {
     const progress = Math.min((performance.now() - startedAt) / duration, 1);
     const easedProgress = smoothFade(progress);
-    audio.volume = startVolume + (audio.gloryFadeTarget - startVolume) * easedProgress;
+    audio.gloryFadeGain = startVolume + (audio.gloryFadeTargetGain - startVolume) * easedProgress;
+    syncAudioVolume(audio);
 
     if (progress >= 1) {
       clearAudioFade(audio);
-      audio.volume = audio.gloryFadeTarget;
+      audio.gloryFadeGain = audio.gloryFadeTargetGain;
+      syncAudioVolume(audio);
       onComplete?.();
     }
   }, AUDIO_FADE_FRAME_MS);
@@ -626,12 +650,11 @@ function playSynthPad(pad) {
 }
 
 function updateVolume() {
-  const nextVolume = masterGainValue();
+  masterVolume = clamp(Number(volumeSlider.value) / 100, 0, 1);
+  localStorage.setItem("gloryPadMasterVolume", String(masterVolume));
 
   [...managedAudios].forEach((audio) => {
-    if (audio.gloryIsFadingOut) return;
-    audio.gloryFadeTarget = nextVolume;
-    fadeAudioTo(audio, nextVolume, 120);
+    syncAudioVolume(audio);
   });
 
   if (synthNodes) {
@@ -662,6 +685,8 @@ function playPad(pad) {
   const audio = new Audio(`${currentLibrary.folder}/${encodeURIComponent(file)}`);
   audio.preload = "auto";
   configureAudioLoop(audio, currentLibrary);
+  audio.gloryFadeGain = 0;
+  audio.gloryFadeTargetGain = 1;
   audio.volume = 0;
   activeAudio = audio;
   managedAudios.add(audio);
@@ -670,7 +695,7 @@ function playPad(pad) {
     .play()
     .then(() => {
       if (hadSynthPad) stopSynth();
-      fadeAudioTo(audio, masterGainValue(), AUDIO_FADE_IN_MS);
+      fadeAudioTo(audio, 1, AUDIO_FADE_IN_MS);
       outgoingAudios.forEach((outgoingAudio) => fadeOutAudio(outgoingAudio));
     })
     .catch(() => {
