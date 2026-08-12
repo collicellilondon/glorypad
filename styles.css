@@ -3133,3 +3133,304 @@ input[type="range"] {
     padding-inline: 0;
   }
 }
+
+/* Viewport lock: keep every app tab fitted to one screen. */
+html,
+body,
+main {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+}
+
+main,
+.app-shell,
+.phone-shell {
+  overflow: hidden;
+}
+
+.cover-screen,
+.app-shell,
+.phone-shell {
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+}
+
+.phone-shell {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
+.view-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.live-view,
+.sounds-view,
+.tuner-view {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-topbar {
+  padding: max(14px, env(safe-area-inset-top)) clamp(14px, 4vw, 22px) 12px;
+}
+
+.mode-tab {
+  min-height: clamp(42px, 6.4dvh, 54px);
+}
+
+.bottom-bar {
+  min-height: clamp(42px, 6dvh, 56px);
+  padding: 6px 16px max(8px, env(safe-area-inset-bottom));
+}
+
+.pads-grid {
+  grid-auto-rows: minmax(0, 1fr);
+}
+
+.pad {
+  min-height: 0;
+}
+
+.sounds-view {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  align-content: start;
+  padding: clamp(12px, 2dvh, 18px) clamp(14px, 4vw, 24px) 10px;
+}
+
+.sounds-heading {
+  min-height: 48px;
+  padding: 0;
+}
+
+.sounds-heading h2 {
+  font-size: clamp(1.55rem, 5.6vw, 2.35rem);
+}
+
+.sound-section-label {
+  padding: 8px 0 10px;
+}
+
+.library-list {
+  min-height: 0;
+  gap: clamp(6px, 1.2dvh, 10px);
+  padding: 0 0 clamp(8px, 1.4dvh, 14px);
+  overflow: hidden;
+}
+
+.library-row {
+  min-height: clamp(46px, 8.3dvh, 66px);
+  padding: 0 16px;
+}
+
+.library-row strong {
+  font-size: clamp(1rem, 4vw, 1.5rem);
+}
+
+.sounds-controls {
+  margin-top: 0;
+}
+
+.collections-panel,
+.settings-panel {
+  min-height: 0;
+}
+
+.tuner-scroll {
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(12px, 2.2dvh, 22px) clamp(14px, 4vw, 24px) 8px;
+}
+
+.tuner-heading h2 {
+  font-size: clamp(1.1rem, 4.4vw, 1.62rem);
+}
+
+.instrument-picker {
+  margin-top: clamp(6px, 1.2dvh, 12px);
+}
+
+.instrument-card-list {
+  height: 38px;
+}
+
+.instrument-card-list.is-open {
+  height: min(176px, 23dvh);
+}
+
+.instrument-card {
+  min-height: 30px;
+}
+
+.instrument-card.is-selected {
+  min-height: 36px;
+}
+
+.instrument-card-copy strong,
+.instrument-card:not(.is-selected) .instrument-card-copy strong {
+  font-size: clamp(0.78rem, 3.2vw, 1.02rem);
+}
+
+.instrument-card.is-selected .instrument-card-copy strong {
+  font-size: clamp(1rem, 4.1vw, 1.28rem);
+}
+
+.tuner-stage {
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+}
+
+.tuner-readout {
+  margin-top: clamp(12px, 2.6dvh, 26px);
+}
+
+.tuner-note {
+  font-size: clamp(4.4rem, 18vw, 7.4rem);
+}
+
+.tuner-note-detail {
+  font-size: clamp(1.55rem, 6vw, 2.7rem);
+}
+
+.tuner-prompt {
+  margin-top: 10px;
+  font-size: clamp(0.96rem, 3.6vw, 1.2rem);
+}
+
+.tuner-frequency {
+  margin-top: 6px;
+}
+
+.tuner-meter {
+  width: min(100%, 480px);
+  height: clamp(184px, 31dvh, 292px);
+  margin-top: clamp(6px, 1.2dvh, 14px);
+}
+
+.tuner-scale {
+  width: min(100%, 460px);
+  height: 86px;
+  font-size: clamp(1rem, 3.8vw, 1.42rem);
+}
+
+.tuner-flat-symbol,
+.tuner-sharp-symbol {
+  top: 45px;
+}
+
+.tuner-mark {
+  height: 38px;
+}
+
+.mark-left-far,
+.mark-right-far {
+  top: 44px;
+}
+
+.mark-left-mid,
+.mark-right-mid {
+  top: 30px;
+  height: 30px;
+}
+
+.mark-center-left,
+.mark-center-right {
+  top: 12px;
+  height: 34px;
+}
+
+.tuner-track {
+  top: 74px;
+  width: min(100%, 420px);
+  height: calc(100% - 76px);
+}
+
+.tuner-needle {
+  bottom: clamp(24px, 4.5dvh, 42px);
+  height: min(48vw, 220px);
+  max-height: calc(100% - 36px);
+}
+
+.tuner-needle::after {
+  bottom: -26px;
+  width: clamp(44px, 12vw, 58px);
+  height: clamp(44px, 12vw, 58px);
+}
+
+.chromatic-notes {
+  align-self: end;
+  margin-top: 0;
+  padding: 0 0 6px;
+}
+
+.chromatic-note {
+  font-size: clamp(0.78rem, 3vw, 1rem);
+}
+
+@media (max-width: 520px) {
+  .app-topbar {
+    padding: max(10px, env(safe-area-inset-top)) 14px 10px;
+  }
+
+  .app-brand strong {
+    font-size: clamp(1.08rem, 5vw, 1.42rem);
+  }
+
+  .mini-wave {
+    flex-basis: 46px;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+  }
+
+  .mode-tab {
+    min-height: 42px;
+    font-size: 0.96rem;
+  }
+
+  .active-strip {
+    min-height: 48px;
+    padding: 8px 14px;
+  }
+
+  .pad-note strong {
+    font-size: clamp(2.2rem, 10vw, 3.4rem);
+  }
+
+  .pad-note span {
+    font-size: 0.66rem;
+  }
+
+  .tuner-scroll {
+    padding: 10px 12px 6px;
+  }
+
+  .tuner-readout {
+    margin-top: clamp(8px, 2dvh, 18px);
+  }
+
+  .tuner-note {
+    font-size: clamp(4rem, 18vw, 6.2rem);
+  }
+
+  .tuner-meter {
+    height: clamp(176px, 30dvh, 238px);
+    margin-top: 4px;
+  }
+
+  .chromatic-notes {
+    padding-bottom: 3px;
+  }
+}
