@@ -20,6 +20,24 @@ const padLibraries = [
   { id: "warm", name: "Warm", folder: "assets/pads-warm", loopCrossfadeMs: 8000 },
 ];
 
+const soundCategories = [
+  { id: "all", labels: { "pt-BR": "Todos", en: "All" }, icon: "all" },
+  { id: "pads", labels: { "pt-BR": "Pads", en: "Pads" }, icon: "pads" },
+  { id: "worship", labels: { "pt-BR": "Worship", en: "Worship" }, icon: "worship" },
+  { id: "ambient", labels: { "pt-BR": "Ambient", en: "Ambient" }, icon: "ambient" },
+  { id: "keys", labels: { "pt-BR": "Keys", en: "Keys" }, icon: "keys" },
+  { id: "textures", labels: { "pt-BR": "Textures", en: "Textures" }, icon: "textures" },
+  { id: "atmospheres", labels: { "pt-BR": "Atmospheres", en: "Atmospheres" }, icon: "atmospheres" },
+  { id: "favorites", labels: { "pt-BR": "Favoritos", en: "Favorites" }, icon: "favorites" },
+];
+
+const soundCollectionMeta = {
+  foundation: { number: "01", categories: ["pads", "worship", "ambient"], tags: ["base", "foundation", "pad", "worship"], isFavorite: false },
+  organic: { number: "02", categories: ["pads", "ambient", "textures"], tags: ["organic", "pad", "texture", "ambient"], isFavorite: false },
+  studio: { number: "03", categories: ["pads", "worship", "atmospheres"], tags: ["studio", "pad", "worship", "atmosphere"], isFavorite: false },
+  warm: { number: "04", categories: ["pads", "worship", "ambient"], tags: ["warm", "pad", "worship", "ambient"], isFavorite: false },
+};
+
 const padsGrid = document.querySelector("#padsGrid");
 const activeNote = document.querySelector("#activeNote");
 const pulseRing = document.querySelector("#pulseRing");
@@ -29,6 +47,7 @@ const topHomeButton = document.querySelector("#topHomeButton");
 const homeConfigButton = document.querySelector("#homeConfigButton");
 const homeScreen = document.querySelector("#homeScreen");
 const padsScreen = document.querySelector("#padsScreen");
+const phoneShell = document.querySelector(".phone-shell");
 const SPLASH_DURATION_MS = 3000;
 const settingsButton = document.querySelector("#settingsButton");
 const backToLiveButton = document.querySelector("#backToLiveButton");
@@ -37,7 +56,11 @@ const soundsView = document.querySelector("#soundsView");
 const tunerView = document.querySelector("#tunerView");
 const toneSelect = document.querySelector("#toneSelect");
 const languageSelect = document.querySelector("#languageSelect");
-const libraryList = document.querySelector("#libraryList");
+const libraryList = document.querySelector("#soundCollectionList") || document.querySelector("#libraryList");
+const soundCategoryList = document.querySelector("#soundCategoryList");
+const soundsSearchButton = document.querySelector("#soundsSearchButton");
+const soundsSearchPanel = document.querySelector("#soundsSearchPanel");
+const soundsSearchInput = document.querySelector("#soundsSearchInput");
 const miniLibraryName = document.querySelector("#miniLibraryName");
 const modeTabs = document.querySelectorAll("[data-view]");
 const instrumentSelect = document.querySelector("#instrumentSelect");
@@ -62,6 +85,8 @@ let splashTimer = null;
 const managedAudios = new Set();
 let currentLanguage = localStorage.getItem("gloryPadLanguage") || "pt-BR";
 let currentView = "live";
+let currentSoundCategory = "all";
+let soundSearchQuery = "";
 let tunerController = null;
 let tunerState = null;
 let tunerFrame = null;
@@ -86,6 +111,7 @@ const translations = {
     language: "Idioma",
     live: "Ao Vivo",
     livePads: "Pads ao vivo",
+    noCollections: "Nenhuma colecao disponivel.",
     none: "Nenhum",
     centsMeter: "Medidor de cents",
     comingSoon: "Em breve",
@@ -96,9 +122,11 @@ const translations = {
     instrumentStrings: "Cordas do instrumento",
     playString: "Toque a corda",
     selectInstrument: "Selecione o instrumento",
+    searchSounds: "Buscar sons",
     sharpHint: "Agudo",
     sharpLabel: "# Agudo",
     soundList: "Lista de sons",
+    soundCategories: "Categorias de sons",
     sounds: "Sons",
     twelveKeys: "Pads das 12 tonalidades",
     tuner: "Afinador",
@@ -119,6 +147,7 @@ const translations = {
     language: "Language",
     live: "Live",
     livePads: "Live pads",
+    noCollections: "No collections available.",
     none: "None",
     centsMeter: "Cents meter",
     comingSoon: "Coming soon",
@@ -129,9 +158,11 @@ const translations = {
     instrumentStrings: "Instrument strings",
     playString: "Play a string",
     selectInstrument: "Select instrument",
+    searchSounds: "Search sounds",
     sharpHint: "Sharp",
     sharpLabel: "# High",
     soundList: "Sound list",
+    soundCategories: "Sound categories",
     sounds: "Sounds",
     twelveKeys: "Pads for the 12 keys",
     tuner: "Tuner",
@@ -336,6 +367,8 @@ function setView(view) {
   liveView.classList.toggle("is-hidden", !isLive);
   soundsView.classList.toggle("is-hidden", !isSounds);
   tunerView.classList.toggle("is-hidden", !isTuner);
+  phoneShell?.classList.toggle("is-sounds-active", isSounds);
+  soundsSearchPanel?.classList.toggle("is-open", isSounds && Boolean(soundSearchQuery));
 
   modeTabs.forEach((button) => {
     button.classList.toggle("is-active", button.dataset.view === view);
@@ -550,19 +583,86 @@ function renderPads() {
     .join("");
 }
 
+function getLibraryDisplayName(library) {
+  return libraryNames[library.id]?.[currentLanguage] || library.name;
+}
+
+function getCollectionMeta(library) {
+  return soundCollectionMeta[library.id] || {
+    number: String(padLibraries.indexOf(library) + 1).padStart(2, "0"),
+    categories: ["pads"],
+    tags: [library.name.toLowerCase()],
+    isFavorite: false,
+  };
+}
+
+function getVisibleLibraries() {
+  const query = soundSearchQuery.trim().toLowerCase();
+
+  return padLibraries.filter((library) => {
+    const meta = getCollectionMeta(library);
+    const categoryMatches =
+      currentSoundCategory === "all" ||
+      (currentSoundCategory === "favorites" ? meta.isFavorite : meta.categories.includes(currentSoundCategory));
+
+    if (!categoryMatches) return false;
+    if (!query) return true;
+
+    const searchableText = [
+      getLibraryDisplayName(library),
+      library.name,
+      meta.number,
+      ...meta.categories,
+      ...meta.tags,
+      "pad collection",
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(query);
+  });
+}
+
+function renderSoundCategories() {
+  if (!soundCategoryList) return;
+
+  soundCategoryList.innerHTML = soundCategories
+    .map((category) => {
+      const isSelected = currentSoundCategory === category.id;
+      return `
+        <button class="sound-category ${isSelected ? "is-selected" : ""}" type="button" data-sound-category="${category.id}" aria-pressed="${String(isSelected)}">
+          <span class="sound-category-icon sound-category-icon-${category.icon}" aria-hidden="true"></span>
+          <span>${category.labels[currentLanguage] || category.labels.en}</span>
+        </button>
+      `;
+    })
+    .join("");
+}
+
 function renderLibraries() {
-  libraryList.innerHTML = padLibraries
+  const visibleLibraries = getVisibleLibraries();
+
+  if (!visibleLibraries.length) {
+    libraryList.innerHTML = `<p class="empty-collections">${t("noCollections")}</p>`;
+    updateLibraryUi();
+    return;
+  }
+
+  libraryList.innerHTML = visibleLibraries
     .map(
-      (library, index) => `
+      (library) => {
+        const meta = getCollectionMeta(library);
+        return `
         <button class="library-row" type="button" data-library-id="${library.id}" aria-pressed="${library.id === currentLibrary.id}">
-          <span class="library-index" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
+          <span class="library-index" aria-hidden="true">${meta.number}</span>
           <span class="library-copy">
-            <strong>${libraryNames[library.id]?.[currentLanguage] || library.name}</strong>
-            <small>${currentLanguage === "en" ? "Pad collection" : "Colecao de pads"}</small>
+            <strong>Pad</strong>
+            <small>Collection</small>
           </span>
           <span class="library-state" aria-hidden="true"></span>
         </button>
-      `,
+      `;
+      },
     )
     .join("");
   updateLibraryUi();
@@ -728,6 +828,11 @@ function applyLanguage(language) {
     element.setAttribute("aria-label", t(element.dataset.i18nAria));
   });
 
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+    element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
+  });
+
+  renderSoundCategories();
   renderLibraries();
   renderInstrumentOptions();
   renderChromaticNotes();
@@ -737,6 +842,7 @@ function applyLanguage(language) {
 
 renderPads();
 renderToneOptions();
+renderSoundCategories();
 renderLibraries();
 renderInstrumentOptions();
 renderTunerStrings();
@@ -755,6 +861,39 @@ libraryList.addEventListener("click", (event) => {
   const button = event.target.closest("[data-library-id]");
   if (!button) return;
   selectLibrary(button.dataset.libraryId);
+});
+
+soundCategoryList?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-sound-category]");
+  if (!button) return;
+  currentSoundCategory = button.dataset.soundCategory;
+  renderSoundCategories();
+  renderLibraries();
+});
+
+soundsSearchButton?.addEventListener("click", () => {
+  const shouldOpen = !soundsSearchPanel?.classList.contains("is-open");
+  soundsSearchPanel?.classList.toggle("is-open", shouldOpen);
+  if (shouldOpen) {
+    soundsSearchInput?.focus();
+  } else {
+    soundSearchQuery = "";
+    if (soundsSearchInput) soundsSearchInput.value = "";
+    renderLibraries();
+  }
+});
+
+soundsSearchInput?.addEventListener("input", () => {
+  soundSearchQuery = soundsSearchInput.value;
+  renderLibraries();
+});
+
+soundsSearchInput?.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  soundSearchQuery = "";
+  soundsSearchInput.value = "";
+  soundsSearchPanel?.classList.remove("is-open");
+  renderLibraries();
 });
 
 modeTabs.forEach((button) => {

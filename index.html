@@ -9,7 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/icons/glorypad-icon.svg?v=2" />
     <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=2" />
     <link rel="manifest" href="site.webmanifest?v=2" />
-    <link rel="stylesheet" href="styles.css?v=glorypad-22" />
+    <link rel="stylesheet" href="styles.css?v=glorypad-23" />
   </head>
   <body>
     <main>
@@ -54,6 +54,9 @@
                 <small id="miniLibraryName">Ambient</small>
               </span>
             </button>
+            <button class="sounds-search-button" id="soundsSearchButton" type="button" aria-label="Buscar sons" data-i18n-aria="searchSounds">
+              <span aria-hidden="true"></span>
+            </button>
           </header>
 
           <nav class="mode-tabs" aria-label="Modos do app" data-i18n-aria="appModes">
@@ -75,6 +78,20 @@
           </section>
 
           <section class="view-panel sounds-view is-hidden" id="soundsView" aria-label="Lista de sons" data-i18n-aria="soundList">
+            <div class="sounds-layout">
+              <aside class="sounds-sidebar" id="soundCategoryList" aria-label="Categorias de sons" data-i18n-aria="soundCategories"></aside>
+
+              <section class="sounds-main" aria-label="Colecoes de sons" data-i18n-aria="collections">
+                <label class="sounds-search-panel" id="soundsSearchPanel">
+                  <span class="sr-only" data-i18n="searchSounds">Buscar sons</span>
+                  <input id="soundsSearchInput" type="search" autocomplete="off" data-i18n-placeholder="searchSounds" placeholder="Buscar sons" />
+                </label>
+
+                <div class="sound-section-label sounds-collections-label" data-i18n="collections">Colecoes</div>
+                <div class="library-list sounds-collection-list" id="soundCollectionList"></div>
+              </section>
+            </div>
+
             <div class="sounds-heading">
               <h2 data-i18n="sounds">Sons</h2>
               <button class="icon-text chevron-button" type="button" id="backToLiveButton" aria-label="Voltar ao vivo" data-i18n-aria="backToLive">
@@ -163,6 +180,6 @@
 
     <script src="tuner-core.js?v=glorypad-1"></script>
     <script src="tuner-audio.js?v=glorypad-1"></script>
-    <script src="app.js?v=glorypad-24"></script>
+    <script src="app.js?v=glorypad-25"></script>
   </body>
 </html>
