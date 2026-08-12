@@ -2111,3 +2111,82 @@ input[type="range"] {
     justify-self: start;
   }
 }
+
+/* Minimal tuner meter: one pointer only, no colored arc. */
+.tuner-meter {
+  height: clamp(170px, 32vw, 230px);
+  margin: 0 auto -34px;
+}
+
+.tuner-scale {
+  inset: 0 2px auto;
+  color: rgba(218, 220, 224, 0.42);
+  font-size: clamp(0.68rem, 2.4vw, 0.88rem);
+}
+
+.tuner-track {
+  left: 50%;
+  bottom: 0;
+  width: min(92%, 620px);
+  height: calc(100% - 26px);
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: translateX(-50%);
+}
+
+.tuner-track::before {
+  display: none;
+}
+
+.tuner-track::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(218, 220, 224, 0.14), transparent);
+}
+
+.tuner-zone,
+.tuner-center,
+.tuner-directions {
+  display: none;
+}
+
+.tuner-needle {
+  top: auto;
+  bottom: 18px;
+  left: 50%;
+  width: 2px;
+  height: calc(100% - 20px);
+  border-radius: 999px;
+  background: rgba(238, 239, 241, 0.86);
+  box-shadow: 0 0 18px rgba(238, 239, 241, 0.16);
+  transform-origin: center bottom;
+  transition: transform 95ms linear, background 160ms ease, box-shadow 160ms ease;
+}
+
+.tuner-needle::after {
+  bottom: -8px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(238, 239, 241, 0.16);
+  background: rgba(160, 162, 166, 0.9);
+  box-shadow: 0 0 16px rgba(238, 239, 241, 0.12);
+}
+
+.tuner-stage.is-in-tune .tuner-needle {
+  background: rgba(238, 239, 241, 0.92);
+  box-shadow: 0 0 20px rgba(238, 239, 241, 0.18);
+}
+
+@media (max-width: 640px) {
+  .tuner-meter {
+    height: 190px;
+    margin-bottom: -28px;
+  }
+}

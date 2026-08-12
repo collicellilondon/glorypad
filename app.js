@@ -457,8 +457,8 @@ function updateTunerUi(state) {
   tunerNoteDetail.textContent = isReliable ? state.noteLabel : t("playString");
   tunerFrequency.textContent = isReliable && Number.isFinite(state.frequencyHz) ? `${state.frequencyHz.toFixed(1)} Hz` : "-- Hz";
   tunerCents.textContent = isReliable ? `${cents > 0 ? "+" : ""}${cents} cents` : "0 cents";
-  const needleDegrees = Math.max(-58, Math.min(58, displayCents * 1.16));
-  tunerNeedle.style.transform = `translateX(-50%) rotate(${needleDegrees}deg)`;
+  const needleOffset = Math.max(-50, Math.min(50, displayCents));
+  tunerNeedle.style.transform = `translateX(calc(-50% + ${needleOffset}%))`;
 
   document.querySelectorAll(".tuner-string").forEach((element) => {
     const isActiveString = isReliable && Number(element.dataset.stringNumber) === state.stringNumber;
