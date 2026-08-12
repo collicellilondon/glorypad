@@ -339,11 +339,6 @@ function renderInstrumentCards() {
           ${instrument.available ? "" : "disabled"}
           aria-pressed="${String(isSelected)}"
         >
-          <span class="instrument-wood-icon" aria-hidden="true">
-            <i></i>
-            <b></b>
-            <em></em>
-          </span>
           <span class="instrument-card-copy">
             <strong>${instrument.name}</strong>
             <small>${instrument.available ? "Standard" : t("comingSoon")}</small>

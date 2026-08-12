@@ -1924,3 +1924,190 @@ input[type="range"] {
     min-height: 242px;
   }
 }
+
+/* Professional correction: keep sounds and instrument controls calm, compact, and functional. */
+.sounds-heading {
+  min-height: 84px;
+  padding: 18px 24px 12px;
+}
+
+.sounds-heading h2 {
+  color: rgba(238, 239, 241, 0.92);
+  font-size: clamp(2.15rem, 8.6vw, 3.7rem);
+  font-weight: 560;
+}
+
+.sound-section-label {
+  padding: 6px 24px 12px;
+  color: rgba(218, 220, 224, 0.44);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+}
+
+.library-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  margin: 0 14px 16px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(218, 220, 224, 0.07);
+  border-radius: 12px;
+  background: rgba(218, 220, 224, 0.055);
+}
+
+.library-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  padding: 0 18px 0 20px;
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
+    rgba(15, 17, 21, 0.96);
+  color: rgba(225, 228, 232, 0.66);
+  box-shadow: none;
+}
+
+.library-row::before {
+  content: "";
+  width: 3px;
+  align-self: stretch;
+  margin: 13px 14px 13px 0;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+
+.library-row strong {
+  flex: 1;
+  max-width: none;
+  color: rgba(238, 239, 241, 0.72);
+  font-size: clamp(1.15rem, 4.6vw, 1.72rem);
+  font-weight: 480;
+  letter-spacing: 0;
+}
+
+.library-row span {
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgba(218, 220, 224, 0.15);
+  border-radius: 999px;
+  background: rgba(218, 220, 224, 0.05);
+  box-shadow: none;
+}
+
+.library-row.is-selected {
+  border: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018)),
+    rgba(24, 26, 31, 0.98);
+  color: rgba(248, 249, 250, 0.94);
+}
+
+.library-row.is-selected::before {
+  background: rgba(225, 228, 232, 0.78);
+  box-shadow: 0 0 14px rgba(225, 228, 232, 0.18);
+}
+
+.library-row.is-selected strong {
+  color: rgba(248, 249, 250, 0.94);
+}
+
+.library-row.is-selected span {
+  background: rgba(225, 228, 232, 0.74);
+  box-shadow: 0 0 14px rgba(225, 228, 232, 0.2);
+}
+
+.sounds-controls {
+  grid-template-columns: 1fr auto;
+  margin: 0 14px 18px;
+  padding: 14px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)),
+    rgba(14, 16, 19, 0.94);
+}
+
+.language-compact {
+  min-width: 98px;
+}
+
+.language-compact span {
+  display: none;
+}
+
+.language-compact select {
+  min-height: 40px;
+  padding-inline: 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.instrument-card-list {
+  grid-auto-columns: minmax(142px, 1fr);
+  gap: 8px;
+}
+
+.instrument-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 64px;
+  padding: 12px 14px;
+  border-radius: 999px;
+  background: rgba(17, 19, 23, 0.82);
+  text-align: center;
+}
+
+.instrument-card::before,
+.instrument-card.is-selected::before {
+  display: none;
+}
+
+.instrument-card.is-selected {
+  border-color: rgba(114, 255, 207, 0.34);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(114, 255, 207, 0.095), transparent 5rem),
+    rgba(24, 27, 31, 0.96);
+  box-shadow: 0 0 18px rgba(114, 255, 207, 0.08);
+}
+
+.instrument-card-copy {
+  gap: 4px;
+}
+
+.instrument-card-copy strong {
+  font-size: clamp(0.94rem, 3.8vw, 1.16rem);
+  font-weight: 650;
+}
+
+.instrument-card-copy small {
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+}
+
+.instrument-wood-icon {
+  display: none;
+}
+
+@media (max-width: 430px) {
+  .sounds-heading {
+    padding-inline: 20px;
+  }
+
+  .library-row {
+    min-height: 68px;
+    padding-right: 16px;
+    padding-left: 18px;
+  }
+
+  .sounds-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .language-compact {
+    justify-self: start;
+  }
+}
