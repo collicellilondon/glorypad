@@ -3434,3 +3434,258 @@ main,
     padding-bottom: 3px;
   }
 }
+
+/* Final balance pass: fitted pages with a centered, readable tuner. */
+.phone-shell {
+  height: 100svh;
+  max-height: 100svh;
+}
+
+@supports (height: 100dvh) {
+  .phone-shell {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
+.bottom-bar {
+  min-height: calc(58px + env(safe-area-inset-bottom));
+  padding: 8px 16px max(18px, env(safe-area-inset-bottom));
+}
+
+.footer-signature {
+  font-size: 0.72rem;
+  line-height: 1.2;
+  letter-spacing: 0.32em;
+}
+
+.tuner-scroll {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  justify-items: stretch;
+  gap: 0;
+  padding: clamp(14px, 2.4dvh, 22px) clamp(14px, 4vw, 24px) clamp(8px, 1.4dvh, 14px);
+}
+
+.tuner-heading h2 {
+  font-size: clamp(1.18rem, 4.8vw, 1.8rem);
+}
+
+.instrument-picker {
+  margin-top: clamp(8px, 1.2dvh, 14px);
+}
+
+.instrument-card-list {
+  height: 40px;
+}
+
+.instrument-card-list.is-open {
+  height: min(184px, 25dvh);
+}
+
+.tuner-stage {
+  align-self: center;
+  display: grid;
+  grid-template-rows: auto minmax(0, auto);
+  justify-items: center;
+  width: 100%;
+  min-height: 0;
+  transform: translateY(-1.5dvh);
+}
+
+.tuner-readout {
+  margin-top: 0;
+}
+
+.tuner-note {
+  color: rgba(255, 77, 91, 0.86);
+  font-size: clamp(5.1rem, 20vw, 8.8rem);
+  font-weight: 360;
+  text-shadow: 0 0 20px rgba(255, 77, 91, 0.08);
+}
+
+.tuner-note-detail {
+  color: rgba(255, 77, 91, 0.72);
+  font-size: clamp(1.9rem, 7vw, 3.35rem);
+}
+
+.tuner-stage:not(.has-signal) .tuner-note,
+.tuner-stage:not(.has-signal) .tuner-note-detail {
+  color: rgba(255, 77, 91, 0.48);
+  opacity: 1;
+}
+
+.tuner-stage.has-signal .tuner-note,
+.tuner-stage.has-signal .tuner-note-detail,
+.tuner-stage.is-flat .tuner-note,
+.tuner-stage.is-flat .tuner-note-detail,
+.tuner-stage.is-sharp .tuner-note,
+.tuner-stage.is-sharp .tuner-note-detail {
+  color: rgba(255, 77, 91, 0.92);
+}
+
+.tuner-stage.is-in-tune .tuner-note,
+.tuner-stage.is-in-tune .tuner-note-detail {
+  color: var(--tuner-lock);
+  text-shadow: 0 0 26px rgba(114, 255, 207, 0.22);
+}
+
+.tuner-prompt {
+  margin-top: 10px;
+  color: rgba(255, 77, 91, 0.76);
+  font-size: clamp(1rem, 3.8vw, 1.24rem);
+}
+
+.tuner-stage.has-signal .tuner-prompt,
+.tuner-stage.is-flat .tuner-prompt,
+.tuner-stage.is-sharp .tuner-prompt {
+  color: rgba(255, 77, 91, 0.9);
+}
+
+.tuner-stage.is-in-tune .tuner-prompt {
+  color: var(--tuner-lock);
+  text-shadow: 0 0 18px rgba(114, 255, 207, 0.18);
+}
+
+.tuner-frequency {
+  margin-top: 8px;
+  font-size: clamp(0.92rem, 3.2vw, 1.08rem);
+}
+
+.tuner-meter {
+  width: min(100%, 560px);
+  height: clamp(300px, 43dvh, 480px);
+  margin-top: clamp(14px, 2.2dvh, 24px);
+}
+
+.tuner-scale {
+  width: min(100%, 520px);
+  height: 118px;
+  font-size: clamp(1.2rem, 4.4vw, 1.7rem);
+}
+
+.tuner-flat-symbol,
+.tuner-sharp-symbol {
+  top: 62px;
+}
+
+.tuner-mark {
+  height: 52px;
+  background: rgba(246, 247, 248, 0.25);
+}
+
+.mark-left-far,
+.mark-right-far {
+  top: 62px;
+}
+
+.mark-left-mid,
+.mark-right-mid {
+  top: 42px;
+  height: 38px;
+}
+
+.mark-center-left,
+.mark-center-right {
+  top: 16px;
+  height: 44px;
+}
+
+.tuner-track {
+  top: 100px;
+  width: min(100%, 500px);
+  height: calc(100% - 104px);
+}
+
+.tuner-needle {
+  bottom: clamp(34px, 5.8dvh, 58px);
+  width: 4px;
+  height: min(58vw, 300px);
+  max-height: calc(100% - 48px);
+  background: rgba(255, 77, 91, 0.88);
+  box-shadow: 0 0 22px rgba(255, 77, 91, 0.12);
+}
+
+.tuner-stage:not(.has-signal) .tuner-needle,
+.tuner-stage.has-signal .tuner-needle,
+.tuner-stage.is-flat .tuner-needle,
+.tuner-stage.is-sharp .tuner-needle {
+  background: rgba(255, 77, 91, 0.9);
+  box-shadow: 0 0 24px rgba(255, 77, 91, 0.14);
+}
+
+.tuner-stage.is-in-tune .tuner-needle {
+  background: var(--tuner-lock);
+  box-shadow: 0 0 30px rgba(114, 255, 207, 0.28);
+}
+
+.tuner-needle::after {
+  bottom: -31px;
+  width: clamp(54px, 14vw, 68px);
+  height: clamp(54px, 14vw, 68px);
+  border-color: rgba(246, 247, 248, 0.18);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 77, 91, 0.86) 0 7px, transparent 8px),
+    transparent;
+}
+
+.tuner-stage.is-in-tune .tuner-needle::after {
+  border-color: rgba(114, 255, 207, 0.32);
+  background:
+    radial-gradient(circle at 50% 50%, rgba(114, 255, 207, 0.94) 0 7px, transparent 8px),
+    transparent;
+}
+
+.chromatic-notes {
+  align-self: end;
+  margin-top: clamp(8px, 1.2dvh, 14px);
+  padding-bottom: clamp(8px, 1.4dvh, 14px);
+}
+
+.chromatic-note {
+  font-size: clamp(0.9rem, 3.4vw, 1.12rem);
+}
+
+@media (max-width: 520px) {
+  .bottom-bar {
+    min-height: calc(62px + env(safe-area-inset-bottom));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .tuner-scroll {
+    padding: 12px 12px 8px;
+  }
+
+  .tuner-heading h2 {
+    font-size: 1.24rem;
+  }
+
+  .instrument-picker {
+    margin-top: 8px;
+  }
+
+  .tuner-stage {
+    transform: translateY(-1dvh);
+  }
+
+  .tuner-note {
+    font-size: clamp(4.9rem, 21vw, 6.8rem);
+  }
+
+  .tuner-note-detail {
+    font-size: clamp(1.8rem, 7vw, 2.7rem);
+  }
+
+  .tuner-meter {
+    height: clamp(300px, 42dvh, 390px);
+    margin-top: 12px;
+  }
+
+  .tuner-needle {
+    height: min(62vw, 290px);
+  }
+
+  .chromatic-notes {
+    padding-bottom: 10px;
+  }
+}
