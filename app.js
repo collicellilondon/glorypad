@@ -355,24 +355,13 @@ function renderTunerStrings() {
   const renderString = (stringNote) => `
         <div class="tuner-string" data-string-number="${stringNote.stringNumber}">
           <strong>${stringNote.note}<small>${stringNote.octave}</small></strong>
-          <span>${stringNote.stringNumber}</span>
         </div>
       `;
   const byNumber = (number) => currentInstrument.strings.find((stringNote) => stringNote.stringNumber === number);
-  const leftStrings = [1, 2, 3].map(byNumber).filter(Boolean);
-  const rightStrings = [5, 4, 6].map(byNumber).filter(Boolean);
+  const displayStrings = [1, 2, 3, 4, 5, 6].map(byNumber).filter(Boolean);
 
   tunerStrings.innerHTML = `
-    <div class="tuner-string-column tuner-string-column-left">
-      ${leftStrings.map(renderString).join("")}
-    </div>
-    <div class="tuner-headstock" aria-hidden="true">
-      <span class="headstock-brand">ColliDev</span>
-      <i></i><i></i><i></i><i></i><i></i><i></i>
-    </div>
-    <div class="tuner-string-column tuner-string-column-right">
-      ${rightStrings.map(renderString).join("")}
-    </div>
+    ${displayStrings.map(renderString).join("")}
   `;
 }
 
@@ -454,7 +443,7 @@ function updateTunerUi(state) {
   tunerStatusDot?.classList.toggle("is-locked", status === "IN_TUNE");
   tunerPrompt.textContent = hint;
   tunerNote.textContent = isReliable ? state.note : "--";
-  tunerNoteDetail.textContent = isReliable ? state.noteLabel : t("playString");
+  tunerNoteDetail.textContent = isReliable && Number.isFinite(state.octave) ? state.octave : "";
   tunerFrequency.textContent = isReliable && Number.isFinite(state.frequencyHz) ? `${state.frequencyHz.toFixed(1)} Hz` : "-- Hz";
   tunerCents.textContent = isReliable ? `${cents > 0 ? "+" : ""}${cents} cents` : "0 cents";
   const needleOffset = Math.max(-50, Math.min(50, displayCents));

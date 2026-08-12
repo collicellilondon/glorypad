@@ -2190,3 +2190,383 @@ input[type="range"] {
     margin-bottom: -28px;
   }
 }
+
+/* Reference tuner layout: title, instrument cascade, note, vertical pointer and string chips. */
+.tuner-scroll {
+  gap: 0;
+  padding: 28px 22px 18px;
+}
+
+.tuner-heading {
+  justify-content: center;
+  padding: 0;
+  text-align: center;
+}
+
+.tuner-heading p,
+.tuner-status-dot {
+  display: none;
+}
+
+.tuner-heading h2 {
+  margin: 0;
+  color: rgba(248, 249, 250, 0.92);
+  font-size: clamp(1.65rem, 7vw, 2.6rem);
+  font-weight: 860;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.instrument-picker {
+  justify-items: center;
+  margin-top: 18px;
+}
+
+.instrument-picker-head {
+  display: none;
+}
+
+.instrument-card-list {
+  display: grid;
+  grid-auto-flow: row;
+  grid-auto-columns: auto;
+  width: min(250px, 72vw);
+  max-height: 156px;
+  gap: 6px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.instrument-card {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(238, 239, 241, 0.48);
+  box-shadow: none;
+}
+
+.instrument-card.is-selected {
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  color: rgba(248, 249, 250, 0.92);
+  box-shadow: none;
+}
+
+.instrument-card.is-selected .instrument-card-copy::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
+  border-right: 2px solid rgba(248, 249, 250, 0.76);
+  border-bottom: 2px solid rgba(248, 249, 250, 0.76);
+  transform: rotate(45deg) translateY(-3px);
+}
+
+.instrument-card-copy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.instrument-card-copy strong {
+  color: currentColor;
+  font-size: clamp(1.08rem, 4.6vw, 1.54rem);
+  font-weight: 720;
+  line-height: 1.05;
+}
+
+.instrument-card:not(.is-selected) .instrument-card-copy strong {
+  font-size: clamp(0.82rem, 3.4vw, 1rem);
+}
+
+.instrument-card-copy small {
+  display: none;
+}
+
+.tuner-stage {
+  min-height: auto;
+  margin-top: clamp(50px, 9dvh, 92px);
+  padding: 0;
+}
+
+.tuner-readout {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0 14px;
+  min-height: auto;
+}
+
+.tuner-note {
+  order: 1;
+  color: rgba(248, 249, 250, 0.94);
+  font-size: clamp(6.5rem, 28vw, 10.8rem);
+  font-weight: 520;
+  line-height: 0.74;
+  text-shadow: 0 0 34px rgba(248, 249, 250, 0.09);
+}
+
+.tuner-note-detail {
+  order: 2;
+  margin: 0;
+  color: var(--tuner-lock);
+  font-size: clamp(2.3rem, 9vw, 4.4rem);
+  font-weight: 620;
+  letter-spacing: 0;
+  text-shadow: 0 0 18px rgba(114, 255, 207, 0.24);
+}
+
+.tuner-frequency {
+  order: 4;
+  grid-column: 1 / -1;
+  margin-top: 34px;
+  color: rgba(248, 249, 250, 0.9);
+  font-size: clamp(1.5rem, 6vw, 2.3rem);
+  font-weight: 780;
+  text-align: center;
+}
+
+.tuner-prompt {
+  order: 5;
+  grid-column: 1 / -1;
+  display: inline-flex;
+  justify-self: center;
+  align-items: center;
+  min-height: 0;
+  margin: 22px 0 0;
+  padding: 12px 22px;
+  border: 1px solid rgba(238, 239, 241, 0.1);
+  border-radius: 999px;
+  background: rgba(17, 19, 23, 0.74);
+  color: rgba(238, 239, 241, 0.78);
+  font-size: clamp(1rem, 4.2vw, 1.28rem);
+  font-weight: 780;
+  letter-spacing: 0;
+}
+
+.tuner-stage.is-flat .tuner-prompt,
+.tuner-stage.is-sharp .tuner-prompt {
+  border-color: rgba(238, 239, 241, 0.16);
+  color: rgba(238, 239, 241, 0.9);
+}
+
+.tuner-stage.is-in-tune .tuner-prompt {
+  border-color: rgba(114, 255, 207, 0.28);
+  background: rgba(114, 255, 207, 0.07);
+  color: var(--tuner-lock);
+  box-shadow: 0 0 24px rgba(114, 255, 207, 0.08);
+}
+
+.tuner-cents {
+  display: none;
+}
+
+.tuner-meter {
+  order: 2;
+  width: min(86vw, 520px);
+  height: clamp(250px, 36dvh, 330px);
+  margin: 28px auto 0;
+}
+
+.tuner-scale {
+  position: absolute;
+  inset: 0;
+  display: block;
+  color: rgba(238, 239, 241, 0.72);
+  font-size: clamp(1.05rem, 3.7vw, 1.44rem);
+  font-weight: 760;
+}
+
+.tuner-scale span {
+  position: absolute;
+}
+
+.tuner-scale span:nth-child(1) {
+  left: 0;
+  top: 18%;
+}
+
+.tuner-scale span:nth-child(2) {
+  right: 0;
+  top: 18%;
+}
+
+.tuner-scale span:nth-child(3) {
+  left: 0;
+  top: 50%;
+  color: rgba(238, 239, 241, 0.72);
+  transform: translateY(-50%);
+}
+
+.tuner-scale span:nth-child(4) {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tuner-scale span:nth-child(5) {
+  left: 0;
+  right: auto;
+  bottom: 14%;
+}
+
+.tuner-track {
+  left: 50%;
+  top: 0;
+  bottom: auto;
+  width: min(68%, 360px);
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+.tuner-track::after {
+  left: 0;
+  right: 0;
+  top: 18%;
+  bottom: auto;
+  height: 64%;
+  background:
+    linear-gradient(90deg, transparent, rgba(238, 239, 241, 0.09), transparent),
+    repeating-linear-gradient(180deg, rgba(238, 239, 241, 0.08) 0 1px, transparent 1px 36px);
+}
+
+.tuner-track::before {
+  display: block;
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  bottom: 6%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(238, 239, 241, 0.12), transparent);
+  opacity: 1;
+  transform: translateX(-50%);
+  -webkit-mask: none;
+  mask: none;
+}
+
+.tuner-zone,
+.tuner-center {
+  display: none;
+}
+
+.tuner-directions {
+  display: flex;
+  left: 0;
+  right: 0;
+  bottom: -20px;
+  color: rgba(238, 239, 241, 0.48);
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.tuner-needle {
+  top: 18%;
+  bottom: auto;
+  left: 50%;
+  width: 5px;
+  height: 64%;
+  border-radius: 999px;
+  background: rgba(238, 239, 241, 0.82);
+  box-shadow: 0 0 18px rgba(238, 239, 241, 0.12);
+}
+
+.tuner-needle::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42px;
+  height: 5px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.tuner-needle::after {
+  display: none;
+}
+
+.tuner-stage.is-in-tune .tuner-needle {
+  background: var(--tuner-lock);
+  color: var(--tuner-lock);
+  box-shadow: 0 0 28px rgba(114, 255, 207, 0.28);
+}
+
+.tuner-strings {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: clamp(54px, 8dvh, 84px);
+}
+
+.tuner-string {
+  display: grid;
+  place-items: center;
+  min-height: 62px;
+  padding: 0;
+  border: 1px solid rgba(238, 239, 241, 0.08);
+  border-radius: 10px;
+  background: rgba(10, 11, 13, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.tuner-string strong {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  color: rgba(248, 249, 250, 0.9);
+  font-size: clamp(1.25rem, 5vw, 1.72rem);
+  font-weight: 820;
+}
+
+.tuner-string strong small {
+  color: rgba(238, 239, 241, 0.62);
+  font-size: 0.56em;
+}
+
+.tuner-string.is-active {
+  border-color: rgba(114, 255, 207, 0.32);
+  background: rgba(14, 20, 18, 0.94);
+  box-shadow: 0 0 18px rgba(114, 255, 207, 0.1), inset 0 0 0 1px rgba(114, 255, 207, 0.06);
+}
+
+.tuner-string.is-in-tune strong,
+.tuner-string.is-in-tune strong small {
+  color: var(--tuner-lock);
+}
+
+.tuner-privacy {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .tuner-scroll {
+    padding: 24px 16px 16px;
+  }
+
+  .instrument-card-list {
+    max-height: 132px;
+  }
+
+  .tuner-stage {
+    margin-top: 44px;
+  }
+
+  .tuner-meter {
+    width: 100%;
+  }
+
+  .tuner-strings {
+    gap: 8px;
+  }
+
+  .tuner-string {
+    min-height: 56px;
+  }
+}
