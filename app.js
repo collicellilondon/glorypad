@@ -153,6 +153,8 @@ const AUDIO_FADE_IN_MS = 5200;
 const AUDIO_FADE_OUT_MS = 9200;
 const STOP_FADE_MS = 1400;
 const AUDIO_FADE_FRAME_MS = 30;
+const DEFAULT_LOOP_CROSSFADE_MS = 9000;
+const LOOP_START_GUARD_MS = 420;
 const DEFAULT_MASTER_VOLUME = 0.75;
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 const readStoredVolume = () => {
@@ -191,11 +193,6 @@ function clearAudioLoop(audio) {
 function configureAudioLoop(audio, library) {
   clearAudioLoop(audio);
 
-  if (!library.loopCrossfadeMs) {
-    audio.loop = true;
-    return;
-  }
-
   audio.loop = false;
   audio.gloryLoopHandler = () => scheduleSeamlessLoop(audio, library);
 
@@ -215,19 +212,20 @@ function scheduleSeamlessLoop(audio, library) {
     return;
   }
 
-  const crossfadeMs = Math.min(library.loopCrossfadeMs, durationMs * 0.4);
-  const nextStartDelayMs = Math.max(durationMs - crossfadeMs, 0);
+  const crossfadeMs = Math.min(library.loopCrossfadeMs || DEFAULT_LOOP_CROSSFADE_MS, durationMs * 0.42);
+  const nextStartDelayMs = Math.max(durationMs - crossfadeMs - LOOP_START_GUARD_MS, 0);
+  const nextAudio = new Audio(audio.currentSrc || audio.src);
+  nextAudio.preload = "auto";
+  nextAudio.volume = 0;
+  nextAudio.gloryFadeGain = 0;
+  nextAudio.gloryFadeTargetGain = 1;
+  nextAudio.load();
 
   audio.gloryLoopTimer = window.setTimeout(() => {
     if (!managedAudios.has(audio) || audio.gloryIsFadingOut) return;
 
-    const nextAudio = new Audio(audio.currentSrc || audio.src);
-    nextAudio.preload = "auto";
-    configureAudioLoop(nextAudio, library);
-    nextAudio.volume = 0;
-    nextAudio.gloryFadeGain = 0;
-    nextAudio.gloryFadeTargetGain = 1;
     managedAudios.add(nextAudio);
+    configureAudioLoop(nextAudio, library);
     activeAudio = nextAudio;
 
     nextAudio
