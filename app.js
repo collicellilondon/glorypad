@@ -66,6 +66,7 @@ let tunerController = null;
 let tunerState = null;
 let tunerFrame = null;
 let currentInstrument = window.GloryPadTunerCore?.instruments?.[0] || null;
+let isInstrumentCarouselOpen = false;
 const TUNER_MIN_CENTS = -50;
 const TUNER_MAX_CENTS = 50;
 const TUNER_IN_TUNE_CENTS = 5;
@@ -336,16 +337,28 @@ function renderInstrumentOptions() {
 function renderInstrumentCards() {
   if (!instrumentCards || !window.GloryPadTunerCore) return;
 
-  instrumentCards.innerHTML = window.GloryPadTunerCore.instruments
-    .map((instrument) => {
+  const instruments = window.GloryPadTunerCore.instruments;
+  const activeIndex = Math.max(0, instruments.findIndex((instrument) => instrument.id === currentInstrument?.id));
+  const visibleInstruments = isInstrumentCarouselOpen
+    ? [-2, -1, 0, 1, 2].map((offset) => ({
+        offset,
+        instrument: instruments[(activeIndex + offset + instruments.length) % instruments.length],
+      }))
+    : [{ offset: 0, instrument: currentInstrument || instruments[0] }];
+
+  instrumentCards.classList.toggle("is-open", isInstrumentCarouselOpen);
+  instrumentCards.innerHTML = visibleInstruments
+    .map(({ instrument, offset }) => {
       const isSelected = currentInstrument?.id === instrument.id;
       return `
         <button
           class="instrument-card ${isSelected ? "is-selected" : ""}"
           type="button"
           data-instrument-id="${instrument.id}"
+          data-carousel-offset="${offset}"
           ${instrument.available ? "" : "disabled"}
           aria-pressed="${String(isSelected)}"
+          aria-expanded="${String(isSelected && isInstrumentCarouselOpen)}"
         >
           <span class="instrument-card-copy">
             <strong>${instrument.name}</strong>
@@ -736,6 +749,7 @@ instrumentSelect?.addEventListener("change", () => {
   }
 
   currentInstrument = nextInstrument;
+  isInstrumentCarouselOpen = false;
   getTunerController()?.setInstrument(currentInstrument);
   renderInstrumentCards();
   renderTunerStrings();
@@ -744,7 +758,13 @@ instrumentSelect?.addEventListener("change", () => {
 
 instrumentCards?.addEventListener("click", (event) => {
   const button = event.target.closest("[data-instrument-id]");
-  if (!button || button.disabled) return;
+  if (!button) return;
+  if (button.classList.contains("is-selected")) {
+    isInstrumentCarouselOpen = !isInstrumentCarouselOpen;
+    renderInstrumentCards();
+    return;
+  }
+  if (button.disabled) return;
   instrumentSelect.value = button.dataset.instrumentId;
   instrumentSelect.dispatchEvent(new Event("change"));
 });
