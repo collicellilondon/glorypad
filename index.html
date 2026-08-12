@@ -85,25 +85,22 @@
             <div class="sound-section-label" data-i18n="collections">Coleções</div>
             <div class="library-list" id="libraryList"></div>
 
-            <div class="settings-card" id="configPanel">
-              <div>
-                <p class="setting-label" data-i18n="keyRelative">Tom / relativa</p>
-                <select id="toneSelect"></select>
-              </div>
-
-              <div>
-                <p class="setting-label" data-i18n="volume">Volume</p>
+            <div class="sounds-controls" id="configPanel">
+              <label class="volume-control">
+                <span class="setting-label" data-i18n="volume">Volume</span>
                 <input id="volume" type="range" min="0" max="100" value="75" />
-              </div>
+              </label>
 
-              <div>
-                <p class="setting-label" data-i18n="language">Idioma</p>
+              <label class="language-compact">
+                <span data-i18n="language">Idioma</span>
                 <select id="languageSelect" aria-label="Idioma" data-i18n-aria="language">
                   <option value="pt-BR">Português</option>
                   <option value="en">English</option>
                 </select>
-              </div>
+              </label>
             </div>
+
+            <select class="sr-only" id="toneSelect" aria-label="Tom / relativa" data-i18n-aria="keyRelative"></select>
           </section>
 
           <section class="view-panel tuner-view is-hidden" id="tunerView" aria-label="Afinador" data-i18n-aria="tuner">
@@ -126,24 +123,32 @@
               </section>
 
               <div class="tuner-stage" id="tunerStage">
-                <p class="tuner-prompt" id="tunerPrompt" data-i18n="playString">Toque uma corda</p>
-                <strong class="tuner-note" id="tunerNote">--</strong>
-                <span class="tuner-note-detail" id="tunerNoteDetail">--</span>
-                <span class="tuner-frequency" id="tunerFrequency">-- Hz</span>
-              </div>
+                <div class="tuner-meter" aria-label="Medidor de cents" data-i18n-aria="centsMeter">
+                  <div class="tuner-scale">
+                    <span>-50</span>
+                    <span>-20</span>
+                    <span>0</span>
+                    <span>+20</span>
+                    <span>+50</span>
+                  </div>
+                  <div class="tuner-track">
+                    <span class="tuner-zone"></span>
+                    <i class="tuner-center"></i>
+                    <b class="tuner-needle" id="tunerNeedle"></b>
+                  </div>
+                  <div class="tuner-directions" aria-hidden="true">
+                    <span data-i18n="flatLabel">b Baixo</span>
+                    <span data-i18n="sharpLabel"># Agudo</span>
+                  </div>
+                </div>
 
-              <div class="tuner-meter" aria-label="Medidor de cents" data-i18n-aria="centsMeter">
-                <div class="tuner-scale">
-                  <span>-50</span>
-                  <span>0</span>
-                  <span>+50</span>
+                <div class="tuner-readout">
+                  <p class="tuner-prompt" id="tunerPrompt" data-i18n="playString">Toque uma corda</p>
+                  <strong class="tuner-note" id="tunerNote">--</strong>
+                  <span class="tuner-note-detail" id="tunerNoteDetail">--</span>
+                  <span class="tuner-frequency" id="tunerFrequency">-- Hz</span>
+                  <strong class="tuner-cents" id="tunerCents">0 cents</strong>
                 </div>
-                <div class="tuner-track">
-                  <span class="tuner-zone"></span>
-                  <i class="tuner-center"></i>
-                  <b class="tuner-needle" id="tunerNeedle"></b>
-                </div>
-                <strong class="tuner-cents" id="tunerCents">0 cents</strong>
               </div>
 
               <div class="tuner-strings" id="tunerStrings" aria-label="Cordas do instrumento" data-i18n-aria="instrumentStrings"></div>

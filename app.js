@@ -82,12 +82,14 @@ const translations = {
     centsMeter: "Medidor de cents",
     comingSoon: "Em breve",
     flatHint: "\u2191 Aperte a corda",
+    flatLabel: "b Baixo",
     inTuneHint: "Afinado",
     instrument: "Instrumento",
     instrumentStrings: "Cordas do instrumento",
     playString: "Toque uma corda",
     selectInstrument: "Selecione o instrumento",
     sharpHint: "\u2193 Afrouxe a corda",
+    sharpLabel: "# Agudo",
     soundList: "Lista de sons",
     sounds: "Sons",
     twelveKeys: "Pads das 12 tonalidades",
@@ -112,12 +114,14 @@ const translations = {
     centsMeter: "Cents meter",
     comingSoon: "Coming soon",
     flatHint: "\u2191 Tighten the string",
+    flatLabel: "b Low",
     inTuneHint: "In tune",
     instrument: "Instrument",
     instrumentStrings: "Instrument strings",
     playString: "Play a string",
     selectInstrument: "Select instrument",
     sharpHint: "\u2193 Loosen the string",
+    sharpLabel: "# High",
     soundList: "Sound list",
     sounds: "Sounds",
     twelveKeys: "Pads for the 12 keys",
@@ -353,16 +357,28 @@ function renderInstrumentCards() {
 function renderTunerStrings() {
   if (!tunerStrings || !currentInstrument) return;
 
-  tunerStrings.innerHTML = currentInstrument.strings
-    .map(
-      (stringNote) => `
+  const renderString = (stringNote) => `
         <div class="tuner-string" data-string-number="${stringNote.stringNumber}">
-          <strong>${stringNote.note}</strong>
-          <span>${stringNote.stringNumber} / ${stringNote.note}${stringNote.octave}</span>
+          <strong>${stringNote.note}<small>${stringNote.octave}</small></strong>
+          <span>${stringNote.stringNumber}</span>
         </div>
-      `,
-    )
-    .join("");
+      `;
+  const byNumber = (number) => currentInstrument.strings.find((stringNote) => stringNote.stringNumber === number);
+  const leftStrings = [1, 2, 3].map(byNumber).filter(Boolean);
+  const rightStrings = [5, 4, 6].map(byNumber).filter(Boolean);
+
+  tunerStrings.innerHTML = `
+    <div class="tuner-string-column tuner-string-column-left">
+      ${leftStrings.map(renderString).join("")}
+    </div>
+    <div class="tuner-headstock" aria-hidden="true">
+      <span class="headstock-brand">ColliDev</span>
+      <i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="tuner-string-column tuner-string-column-right">
+      ${rightStrings.map(renderString).join("")}
+    </div>
+  `;
 }
 
 function getTunerController() {
@@ -446,7 +462,8 @@ function updateTunerUi(state) {
   tunerNoteDetail.textContent = isReliable ? state.noteLabel : t("playString");
   tunerFrequency.textContent = isReliable && Number.isFinite(state.frequencyHz) ? `${state.frequencyHz.toFixed(1)} Hz` : "-- Hz";
   tunerCents.textContent = isReliable ? `${cents > 0 ? "+" : ""}${cents} cents` : "0 cents";
-  tunerNeedle.style.transform = `translateX(calc(-50% + ${displayCents}%))`;
+  const needleDegrees = Math.max(-58, Math.min(58, displayCents * 1.16));
+  tunerNeedle.style.transform = `translateX(-50%) rotate(${needleDegrees}deg)`;
 
   document.querySelectorAll(".tuner-string").forEach((element) => {
     const isActiveString = isReliable && Number(element.dataset.stringNumber) === state.stringNumber;
