@@ -553,10 +553,14 @@ function renderPads() {
 function renderLibraries() {
   libraryList.innerHTML = padLibraries
     .map(
-      (library) => `
+      (library, index) => `
         <button class="library-row" type="button" data-library-id="${library.id}" aria-pressed="${library.id === currentLibrary.id}">
-          <strong>${libraryNames[library.id]?.[currentLanguage] || library.name}</strong>
-          <span aria-hidden="true"></span>
+          <span class="library-index" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
+          <span class="library-copy">
+            <strong>${libraryNames[library.id]?.[currentLanguage] || library.name}</strong>
+            <small>${currentLanguage === "en" ? "Pad collection" : "Colecao de pads"}</small>
+          </span>
+          <span class="library-state" aria-hidden="true"></span>
         </button>
       `,
     )
