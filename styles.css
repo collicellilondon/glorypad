@@ -2938,3 +2938,75 @@ input[type="range"] {
     width: 100%;
   }
 }
+
+/* Instrument carousel for the tuner header. */
+.instrument-picker {
+  width: 100%;
+  gap: 10px;
+}
+
+.instrument-card-list {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  justify-content: start;
+  width: min(100%, 520px);
+  max-height: none;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px max(18px, calc((100% - 520px) / 2)) 8px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.instrument-card-list::-webkit-scrollbar {
+  display: none;
+}
+
+.instrument-card {
+  min-width: 112px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(246, 247, 248, 0.08);
+  border-radius: 999px;
+  background: rgba(246, 247, 248, 0.025);
+  color: rgba(246, 247, 248, 0.46);
+  scroll-snap-align: center;
+}
+
+.instrument-card.is-selected {
+  min-height: 36px;
+  border: 1px solid rgba(246, 247, 248, 0.22);
+  border-radius: 999px;
+  background: rgba(246, 247, 248, 0.065);
+  color: rgba(246, 247, 248, 0.92);
+}
+
+.instrument-card.is-selected .instrument-card-copy::after {
+  display: none;
+}
+
+.instrument-card:disabled {
+  opacity: 0.42;
+}
+
+.instrument-card-copy strong,
+.instrument-card:not(.is-selected) .instrument-card-copy strong {
+  font-size: clamp(0.78rem, 3vw, 0.92rem);
+  font-weight: 520;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.instrument-card-copy small {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .instrument-card-list {
+    width: calc(100% + 28px);
+    margin-inline: -14px;
+    padding-inline: 14px;
+  }
+}
