@@ -114,44 +114,39 @@
               </div>
 
               <section class="instrument-picker" aria-label="Instrumento" data-i18n-aria="instrument">
-                <div class="instrument-picker-head">
-                  <span data-i18n="instrument">Instrumento</span>
-                  <small data-i18n="selectInstrument">Selecione o instrumento</small>
-                </div>
-                <select class="sr-only" id="instrumentSelect" aria-label="Instrumento" data-i18n-aria="instrument"></select>
+                <select class="tuner-instrument-select" id="instrumentSelect" aria-label="Instrumento" data-i18n-aria="instrument"></select>
                 <div class="instrument-card-list" id="instrumentCards"></div>
               </section>
 
               <div class="tuner-stage" id="tunerStage">
+                <div class="tuner-readout">
+                  <strong class="tuner-note" id="tunerNote">--</strong>
+                  <span class="tuner-note-detail" id="tunerNoteDetail"></span>
+                  <p class="tuner-prompt" id="tunerPrompt" data-i18n="playString">Toque a corda</p>
+                  <span class="tuner-frequency" id="tunerFrequency">-- Hz</span>
+                  <strong class="tuner-cents" id="tunerCents">0 cents</strong>
+                </div>
+
                 <div class="tuner-meter" aria-label="Medidor de cents" data-i18n-aria="centsMeter">
                   <div class="tuner-scale">
-                    <span>-50</span>
-                    <span>-20</span>
-                    <span>0</span>
-                    <span>+20</span>
-                    <span>+50</span>
+                    <span class="tuner-flat-symbol">♭</span>
+                    <i class="tuner-mark mark-left-far"></i>
+                    <i class="tuner-mark mark-left-mid"></i>
+                    <i class="tuner-mark mark-center-left"></i>
+                    <i class="tuner-mark mark-center-right"></i>
+                    <i class="tuner-mark mark-right-mid"></i>
+                    <i class="tuner-mark mark-right-far"></i>
+                    <span class="tuner-sharp-symbol">#</span>
                   </div>
                   <div class="tuner-track">
                     <span class="tuner-zone"></span>
                     <i class="tuner-center"></i>
                     <b class="tuner-needle" id="tunerNeedle"></b>
                   </div>
-                  <div class="tuner-directions" aria-hidden="true">
-                    <span data-i18n="flatLabel">b Baixo</span>
-                    <span data-i18n="sharpLabel"># Agudo</span>
-                  </div>
-                </div>
-
-                <div class="tuner-readout">
-                  <p class="tuner-prompt" id="tunerPrompt" data-i18n="playString">Toque uma corda</p>
-                  <strong class="tuner-note" id="tunerNote">--</strong>
-                  <span class="tuner-note-detail" id="tunerNoteDetail">--</span>
-                  <span class="tuner-frequency" id="tunerFrequency">-- Hz</span>
-                  <strong class="tuner-cents" id="tunerCents">0 cents</strong>
                 </div>
               </div>
 
-              <div class="tuner-strings" id="tunerStrings" aria-label="Cordas do instrumento" data-i18n-aria="instrumentStrings"></div>
+              <div class="chromatic-notes" id="chromaticNotes" aria-label="Notas cromáticas" data-i18n-aria="chromaticNotes"></div>
 
               <p class="tuner-privacy" data-i18n="tunerPrivacy">
                 O audio do microfone e processado localmente e nunca e gravado ou enviado.

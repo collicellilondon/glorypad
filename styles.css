@@ -2570,3 +2570,371 @@ input[type="range"] {
     min-height: 56px;
   }
 }
+
+/* Final tuner reference pass: minimal pendulum interface. */
+.tuner-view {
+  overflow: hidden;
+  background: #151515;
+}
+
+.tuner-scroll {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  min-height: 100%;
+  min-height: calc(100dvh - 158px);
+  padding: clamp(20px, 4dvh, 34px) clamp(18px, 5vw, 34px) 18px;
+  background: #151515;
+}
+
+.tuner-heading {
+  display: grid;
+  justify-items: center;
+}
+
+.tuner-heading h2 {
+  color: rgba(246, 247, 248, 0.94);
+  font-size: clamp(1.3rem, 5.2vw, 2rem);
+  font-weight: 760;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.instrument-picker {
+  display: grid;
+  justify-items: center;
+  margin: 18px 0 0;
+}
+
+.instrument-card-list {
+  display: none;
+}
+
+.tuner-instrument-select {
+  width: auto;
+  min-width: 154px;
+  min-height: 42px;
+  padding: 0 34px 0 18px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(246, 247, 248, 0.9);
+  font-size: clamp(1.12rem, 4.6vw, 1.65rem);
+  font-weight: 560;
+  line-height: 1;
+  text-align: center;
+  text-align-last: center;
+  outline: 0;
+  appearance: auto;
+}
+
+.tuner-stage {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+}
+
+.tuner-readout {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0 8px;
+  margin-top: clamp(34px, 7dvh, 74px);
+}
+
+.tuner-note {
+  grid-column: 1;
+  color: rgba(246, 247, 248, 0.88);
+  font-size: clamp(5.6rem, 24vw, 10rem);
+  font-weight: 300;
+  line-height: 0.8;
+  letter-spacing: 0;
+  text-shadow: none;
+  transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.tuner-note-detail {
+  grid-column: 2;
+  color: rgba(246, 247, 248, 0.52);
+  font-size: clamp(2rem, 8vw, 3.8rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0;
+  text-shadow: none;
+  transform: translateY(0.1em);
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.tuner-stage:not(.has-signal) .tuner-note,
+.tuner-stage:not(.has-signal) .tuner-note-detail {
+  opacity: 0.34;
+}
+
+.tuner-stage.has-signal .tuner-note {
+  color: rgba(248, 249, 250, 0.94);
+}
+
+.tuner-stage.is-in-tune .tuner-note,
+.tuner-stage.is-in-tune .tuner-note-detail {
+  color: rgba(248, 249, 250, 0.98);
+}
+
+.tuner-prompt {
+  grid-column: 1 / -1;
+  justify-self: center;
+  min-height: auto;
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(246, 247, 248, 0.86);
+  font-size: clamp(1.16rem, 4.8vw, 1.55rem);
+  font-weight: 400;
+  line-height: 1.15;
+  box-shadow: none;
+}
+
+.tuner-stage.is-in-tune .tuner-prompt {
+  border: 0;
+  background: transparent;
+  color: rgba(248, 249, 250, 0.96);
+  box-shadow: none;
+}
+
+.tuner-frequency {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: 10px;
+  color: rgba(246, 247, 248, 0.48);
+  font-size: clamp(0.82rem, 2.8vw, 1rem);
+  font-weight: 500;
+}
+
+.tuner-cents {
+  display: none;
+}
+
+.tuner-meter {
+  position: relative;
+  justify-self: center;
+  width: min(92vw, 580px);
+  height: clamp(330px, 47dvh, 520px);
+  margin: clamp(22px, 4dvh, 42px) auto 0;
+}
+
+.tuner-scale {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: min(88vw, 520px);
+  height: 132px;
+  color: rgba(246, 247, 248, 0.42);
+  font-size: clamp(1.45rem, 5.5vw, 2rem);
+  font-weight: 300;
+  transform: translateX(-50%);
+}
+
+.tuner-scale span,
+.tuner-scale i {
+  position: absolute;
+  display: block;
+}
+
+.tuner-flat-symbol {
+  left: 0;
+  top: 66px;
+}
+
+.tuner-sharp-symbol {
+  right: 0;
+  top: 66px;
+}
+
+.tuner-mark {
+  width: 2px;
+  height: 58px;
+  border-radius: 999px;
+  background: rgba(246, 247, 248, 0.3);
+  transform-origin: 50% 100%;
+}
+
+.mark-left-far {
+  left: 9%;
+  top: 64px;
+  transform: rotate(-25deg);
+}
+
+.mark-left-mid {
+  left: 27%;
+  top: 44px;
+  height: 42px;
+  transform: rotate(-14deg);
+}
+
+.mark-center-left {
+  left: calc(50% - 14px);
+  top: 18px;
+  height: 46px;
+}
+
+.mark-center-right {
+  left: calc(50% + 14px);
+  top: 18px;
+  height: 46px;
+}
+
+.mark-right-mid {
+  right: 27%;
+  top: 44px;
+  height: 42px;
+  transform: rotate(14deg);
+}
+
+.mark-right-far {
+  right: 9%;
+  top: 64px;
+  transform: rotate(25deg);
+}
+
+.tuner-track {
+  position: absolute;
+  left: 50%;
+  top: 112px;
+  width: min(84vw, 480px);
+  height: calc(100% - 116px);
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: translateX(-50%);
+}
+
+.tuner-track::before,
+.tuner-track::after,
+.tuner-zone,
+.tuner-center,
+.tuner-directions {
+  display: none;
+}
+
+.tuner-needle {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(36px, 7dvh, 62px);
+  width: 3px;
+  height: min(62vw, 320px);
+  max-height: calc(100% - 58px);
+  border-radius: 999px;
+  background: rgba(246, 247, 248, 0.54);
+  box-shadow: none;
+  transform: rotate(0deg);
+  transform-origin: 50% calc(100% - 1px);
+  transition: transform 160ms ease-out, background 180ms ease, opacity 180ms ease;
+}
+
+.tuner-needle::before {
+  display: none;
+}
+
+.tuner-needle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -33px;
+  display: block;
+  width: clamp(56px, 15vw, 70px);
+  height: clamp(56px, 15vw, 70px);
+  border: 2px solid rgba(246, 247, 248, 0.18);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(246, 247, 248, 0.74) 0 7px, transparent 8px),
+    transparent;
+  box-shadow: none;
+  transform: translateX(-50%);
+}
+
+.tuner-stage.has-signal .tuner-needle {
+  background: rgba(246, 247, 248, 0.82);
+}
+
+.tuner-stage.is-in-tune .tuner-needle {
+  background: rgba(248, 249, 250, 0.98);
+  box-shadow: 0 0 18px rgba(248, 249, 250, 0.12);
+}
+
+.chromatic-notes {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: end;
+  gap: 0;
+  margin-top: clamp(20px, 3dvh, 34px);
+  padding: 0 0 18px;
+}
+
+.chromatic-notes::after {
+  content: "";
+  position: absolute;
+  left: calc((100% / 12) * var(--active-note-index, 0) + (100% / 24));
+  bottom: 0;
+  width: 2px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(246, 247, 248, 0);
+  transform: translateX(-50%);
+  transition: left 160ms ease-out, background 160ms ease;
+}
+
+.chromatic-notes.has-active-note::after {
+  background: rgba(246, 247, 248, 0.92);
+}
+
+.chromatic-note {
+  display: block;
+  color: rgba(246, 247, 248, 0.36);
+  font-size: clamp(0.94rem, 3.7vw, 1.26rem);
+  font-weight: 400;
+  line-height: 1;
+  text-align: center;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.chromatic-note.is-active {
+  color: rgba(246, 247, 248, 0.96);
+  transform: translateY(-2px);
+}
+
+.tuner-strings,
+.tuner-privacy {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .tuner-scroll {
+    min-height: calc(100dvh - 142px);
+    padding: 20px 14px 16px;
+  }
+
+  .tuner-readout {
+    margin-top: clamp(28px, 5.5dvh, 46px);
+  }
+
+  .tuner-meter {
+    width: 100%;
+    height: clamp(330px, 46dvh, 440px);
+    margin-top: 18px;
+  }
+
+  .tuner-scale {
+    width: 100%;
+  }
+
+  .tuner-track {
+    width: 100%;
+  }
+}

@@ -51,6 +51,7 @@ const tunerFrequency = document.querySelector("#tunerFrequency");
 const tunerNeedle = document.querySelector("#tunerNeedle");
 const tunerCents = document.querySelector("#tunerCents");
 const tunerStrings = document.querySelector("#tunerStrings");
+const chromaticNotesElement = document.querySelector("#chromaticNotes");
 
 let activePad = null;
 let activeAudio = null;
@@ -65,6 +66,11 @@ let tunerController = null;
 let tunerState = null;
 let tunerFrame = null;
 let currentInstrument = window.GloryPadTunerCore?.instruments?.[0] || null;
+const TUNER_MIN_CENTS = -50;
+const TUNER_MAX_CENTS = 50;
+const TUNER_IN_TUNE_CENTS = 5;
+const TUNER_MAX_NEEDLE_ANGLE = 20;
+const CHROMATIC_NOTES = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 
 const translations = {
   "pt-BR": {
@@ -74,6 +80,7 @@ const translations = {
     backToEntry: "Voltar para entrada",
     backToLive: "Voltar ao vivo",
     collections: "Coleções",
+    chromaticNotes: "Notas cromáticas",
     keyRelative: "Tom / relativa",
     language: "Idioma",
     live: "Ao Vivo",
@@ -81,14 +88,14 @@ const translations = {
     none: "Nenhum",
     centsMeter: "Medidor de cents",
     comingSoon: "Em breve",
-    flatHint: "\u2191 Aperte a corda",
+    flatHint: "Grave",
     flatLabel: "b Baixo",
     inTuneHint: "Afinado",
     instrument: "Instrumento",
     instrumentStrings: "Cordas do instrumento",
-    playString: "Toque uma corda",
+    playString: "Toque a corda",
     selectInstrument: "Selecione o instrumento",
-    sharpHint: "\u2193 Afrouxe a corda",
+    sharpHint: "Agudo",
     sharpLabel: "# Agudo",
     soundList: "Lista de sons",
     sounds: "Sons",
@@ -106,6 +113,7 @@ const translations = {
     backToEntry: "Back to intro",
     backToLive: "Back to live",
     collections: "Collections",
+    chromaticNotes: "Chromatic notes",
     keyRelative: "Key / relative",
     language: "Language",
     live: "Live",
@@ -113,14 +121,14 @@ const translations = {
     none: "None",
     centsMeter: "Cents meter",
     comingSoon: "Coming soon",
-    flatHint: "\u2191 Tighten the string",
+    flatHint: "Flat",
     flatLabel: "b Low",
     inTuneHint: "In tune",
     instrument: "Instrument",
     instrumentStrings: "Instrument strings",
     playString: "Play a string",
     selectInstrument: "Select instrument",
-    sharpHint: "\u2193 Loosen the string",
+    sharpHint: "Sharp",
     sharpLabel: "# High",
     soundList: "Sound list",
     sounds: "Sounds",
@@ -316,7 +324,7 @@ function renderInstrumentOptions() {
 
   instrumentSelect.innerHTML = window.GloryPadTunerCore.instruments
     .map((instrument) => {
-      const suffix = instrument.available ? " \u2713" : ` - ${t("comingSoon")}`;
+      const suffix = instrument.available ? "" : ` - ${t("comingSoon")}`;
       return `<option value="${instrument.id}" ${instrument.available ? "" : "disabled"}>${instrument.name}${suffix}</option>`;
     })
     .join("");
@@ -351,18 +359,42 @@ function renderInstrumentCards() {
 
 function renderTunerStrings() {
   if (!tunerStrings || !currentInstrument) return;
+  tunerStrings.innerHTML = "";
+}
 
-  const renderString = (stringNote) => `
-        <div class="tuner-string" data-string-number="${stringNote.stringNumber}">
-          <strong>${stringNote.note}<small>${stringNote.octave}</small></strong>
-        </div>
-      `;
-  const byNumber = (number) => currentInstrument.strings.find((stringNote) => stringNote.stringNumber === number);
-  const displayStrings = [1, 2, 3, 4, 5, 6].map(byNumber).filter(Boolean);
+function renderChromaticNotes() {
+  if (!chromaticNotesElement) return;
 
-  tunerStrings.innerHTML = `
-    ${displayStrings.map(renderString).join("")}
-  `;
+  chromaticNotesElement.innerHTML = CHROMATIC_NOTES.map(
+    (note) => `
+      <span class="chromatic-note" data-note="${note}">
+        ${note}
+      </span>
+    `,
+  ).join("");
+  chromaticNotesElement.style.setProperty("--active-note-index", "0");
+}
+
+function getTuningHint(status, cents, isReliable) {
+  if (!isReliable) return t("playString");
+  if (Math.abs(cents) <= TUNER_IN_TUNE_CENTS) return t("inTuneHint");
+  if (cents <= -35) return currentLanguage === "en" ? "Very flat" : "Muito grave";
+  if (cents < -TUNER_IN_TUNE_CENTS) return t("flatHint");
+  if (cents >= 35) return currentLanguage === "en" ? "Very sharp" : "Muito agudo";
+  if (cents > TUNER_IN_TUNE_CENTS) return t("sharpHint");
+  return currentLanguage === "en" ? "Almost there" : "Quase lá";
+}
+
+function updateChromaticNotes(activeNote, isReliable) {
+  if (!chromaticNotesElement) return;
+
+  const activeIndex = CHROMATIC_NOTES.indexOf(activeNote);
+  chromaticNotesElement.classList.toggle("has-active-note", isReliable && activeIndex >= 0);
+  if (activeIndex >= 0) chromaticNotesElement.style.setProperty("--active-note-index", String(activeIndex));
+
+  chromaticNotesElement.querySelectorAll(".chromatic-note").forEach((element) => {
+    element.classList.toggle("is-active", isReliable && element.dataset.note === activeNote);
+  });
 }
 
 function getTunerController() {
@@ -433,21 +465,23 @@ function updateTunerUi(state) {
 
   const isReliable = Boolean(state.reliable);
   const status = state.status || "NO_SIGNAL";
-  const hint = status === "IN_TUNE" ? t("inTuneHint") : status === "FLAT" ? t("flatHint") : status === "SHARP" ? t("sharpHint") : state.message || t("playString");
   const cents = Number.isFinite(state.cents) ? Math.round(state.cents) : 0;
   const displayCents = Number.isFinite(state.displayCents) ? state.displayCents : 0;
+  const hint = getTuningHint(status, cents, isReliable);
+  const needleAngle = (Math.max(TUNER_MIN_CENTS, Math.min(TUNER_MAX_CENTS, displayCents)) / TUNER_MAX_CENTS) * TUNER_MAX_NEEDLE_ANGLE;
 
   tunerStage.classList.toggle("is-flat", status === "FLAT");
   tunerStage.classList.toggle("is-sharp", status === "SHARP");
   tunerStage.classList.toggle("is-in-tune", status === "IN_TUNE");
+  tunerStage.classList.toggle("has-signal", isReliable);
   tunerStatusDot?.classList.toggle("is-locked", status === "IN_TUNE");
   tunerPrompt.textContent = hint;
   tunerNote.textContent = isReliable ? state.note : "--";
   tunerNoteDetail.textContent = isReliable && Number.isFinite(state.octave) ? state.octave : "";
   tunerFrequency.textContent = isReliable && Number.isFinite(state.frequencyHz) ? `${state.frequencyHz.toFixed(1)} Hz` : "-- Hz";
   tunerCents.textContent = isReliable ? `${cents > 0 ? "+" : ""}${cents} cents` : "0 cents";
-  const needleOffset = Math.max(-50, Math.min(50, displayCents));
-  tunerNeedle.style.transform = `translateX(calc(-50% + ${needleOffset}%))`;
+  tunerNeedle.style.transform = `rotate(${needleAngle}deg)`;
+  updateChromaticNotes(state.note, isReliable);
 
   document.querySelectorAll(".tuner-string").forEach((element) => {
     const isActiveString = isReliable && Number(element.dataset.stringNumber) === state.stringNumber;
@@ -656,6 +690,7 @@ function applyLanguage(language) {
 
   renderLibraries();
   renderInstrumentOptions();
+  renderChromaticNotes();
   setActivePad(activePad);
   updateTunerUi(tunerState || getTunerController()?.engine.getState());
 }
@@ -665,6 +700,7 @@ renderToneOptions();
 renderLibraries();
 renderInstrumentOptions();
 renderTunerStrings();
+renderChromaticNotes();
 lockDarkTheme();
 applyLanguage(currentLanguage);
 splashTimer = window.setTimeout(() => showPads("live"), SPLASH_DURATION_MS);

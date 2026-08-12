@@ -193,6 +193,7 @@
         status,
         message: statusMessage(status),
         note: analysis.note,
+        octave: analysis.octave,
         noteLabel: analysis.noteLabel,
         cents: this.smoothedCents,
         displayCents,
